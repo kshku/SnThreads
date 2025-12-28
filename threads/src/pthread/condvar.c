@@ -20,7 +20,7 @@ bool sn_condvar_init(snCondvar *cv) {
     return pthread_cond_init(&c->cond, NULL) == 0;
 }
 
-void sn_condvar_destroy(snCondvar *cv) {
+void sn_condvar_deinit(snCondvar *cv) {
     snCondvarPthread *c = (snCondvarPthread *)cv;
     pthread_cond_destroy(&c->cond);
 }

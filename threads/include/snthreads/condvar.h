@@ -36,13 +36,13 @@ typedef struct snCondvar {
 SN_API bool sn_condvar_init(snCondvar *cv);
 
 /**
- * @brief Destroy a condition variable.
+ * @brief Deinitialize a condition variable.
  *
  * @param cv Pointer to condvar.
  *
  * No threads may be waiting.
  */
-SN_API void sn_condvar_destroy(snCondvar *cv);
+SN_API void sn_condvar_deinit(snCondvar *cv);
 
 /**
  * @brief Wait on condition variable.

@@ -20,7 +20,7 @@ bool sn_condvar_init(snCondvar *cv) {
     return true;
 }
 
-void sn_condvar_destroy(snCondvar *cv) {
+void sn_condvar_deinit(snCondvar *cv) {
     SN_UNUSED(cv);
     // Nothing to do
 }

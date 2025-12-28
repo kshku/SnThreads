@@ -7,6 +7,7 @@ set(HEADERFILES
     mutex.h
     rwlock.h
     condvar.h
+    semaphore.h
 )
 
 set(SRCS
@@ -17,6 +18,7 @@ set(SPECIFIC_SRCS
     mutex.c
     rwlock.c
     condvar.c
+    semaphore.c
 )
 
 set(SUBDIRS
