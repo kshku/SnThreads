@@ -5,6 +5,8 @@ set(HEADERFILES
     atomics.h
     spinlock.h
     mutex.h
+    rwlock.h
+    condvar.h
 )
 
 set(SRCS
@@ -13,6 +15,8 @@ set(SRCS
 set(SPECIFIC_SRCS
     snthreads.c
     mutex.c
+    rwlock.c
+    condvar.c
 )
 
 set(SUBDIRS
