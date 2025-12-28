@@ -1,4 +1,4 @@
-#include "snthreads/snthreads.h"
+#include "snthreads/thread.h"
 
 #if defined(SN_OS_LINUX) || defined(SN_OS_MAC)
 

@@ -21,32 +21,32 @@ void sn_rwlock_deinit(snRWLock *rw) {
     pthread_rwlock_destroy(&l->rwlock);
 }
 
-void sn_rwlock_rdlock(snRWLock *rw) {
+void sn_rwlock_read_lock(snRWLock *rw) {
     snRWLockPthread *l = (snRWLockPthread *)rw;
     pthread_rwlock_rdlock(&l->rwlock);
 }
 
-bool sn_rwlock_try_rdlock(snRWLock *rw) {
+bool sn_rwlock_try_read_lock(snRWLock *rw) {
     snRWLockPthread *l = (snRWLockPthread *)rw;
     return pthread_rwlock_tryrdlock(&l->rwlock) == 0;
 }
 
-void sn_rwlock_rdunlock(snRWLock *rw) {
+void sn_rwlock_read_unlock(snRWLock *rw) {
     snRWLockPthread *l = (snRWLockPthread *)rw;
     pthread_rwlock_unlock(&l->rwlock);
 }
 
-void sn_rwlock_wrlock(snRWLock *rw) {
+void sn_rwlock_write_lock(snRWLock *rw) {
     snRWLockPthread *l = (snRWLockPthread *)rw;
     pthread_rwlock_wrlock(&l->rwlock);
 }
 
-bool sn_rwlock_try_wrlock(snRWLock *rw) {
+bool sn_rwlock_try_write_lock(snRWLock *rw) {
     snRWLockPthread *l = (snRWLockPthread *)rw;
     return pthread_rwlock_trywrlock(&l->rwlock) == 0;
 }
 
-void sn_rwlock_wrunlock(snRWLock *rw) {
+void sn_rwlock_write_unlock(snRWLock *rw) {
     snRWLockPthread *l = (snRWLockPthread *)rw;
     pthread_rwlock_unlock(&l->rwlock);
 }

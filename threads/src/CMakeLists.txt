@@ -1,7 +1,7 @@
 set(HEADERFILES
     platform.h
     defines.h
-    snthreads.h
+    thread.h
     atomics.h
     spinlock.h
     mutex.h
@@ -14,7 +14,7 @@ set(SRCS
 )
 
 set(SPECIFIC_SRCS
-    snthreads.c
+    thread.c
     mutex.c
     rwlock.c
     condvar.c

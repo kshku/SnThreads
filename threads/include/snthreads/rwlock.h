@@ -32,7 +32,7 @@ SN_API void sn_rwlock_deinit(snRWLock *rw);
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_rdlock(snRWLock *rw);
+SN_API void sn_rwlock_read_lock(snRWLock *rw);
 
 /**
  * @brief Try to acquire read lock.
@@ -41,21 +41,21 @@ SN_API void sn_rwlock_rdlock(snRWLock *rw);
  *
  * @return Returns true if lock is acquired.
  */
-SN_API bool sn_rwlock_try_rdlock(snRWLock *rw);
+SN_API bool sn_rwlock_try_read_lock(snRWLock *rw);
 
 /**
  * @brief Release read lock.
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_rdunlock(snRWLock *rw);
+SN_API void sn_rwlock_read_unlock(snRWLock *rw);
 
 /**
  * Acquire write lock.
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_wrlock(snRWLock *rw);
+SN_API void sn_rwlock_write_lock(snRWLock *rw);
 
 /**
  * @brief Try to acquire write lock.
@@ -64,12 +64,12 @@ SN_API void sn_rwlock_wrlock(snRWLock *rw);
  *
  * @return Returns true if lock is acquired.
  */
-SN_API bool sn_rwlock_try_wrlock(snRWLock *rw);
+SN_API bool sn_rwlock_try_write_lock(snRWLock *rw);
 
 /**
  * @brief Release write lock.
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_wrunlock(snRWLock *rw);
+SN_API void sn_rwlock_write_unlock(snRWLock *rw);
 
