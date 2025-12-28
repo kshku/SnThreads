@@ -2,6 +2,7 @@ set(HEADERFILES
     platform.h
     defines.h
     snthreads.h
+    atomics.h
 )
 
 set(SRCS
@@ -27,3 +28,5 @@ foreach(dir IN LISTS SUBDIRS)
         target_sources(snthreads PRIVATE "${dir}/${src}")
     endforeach()
 endforeach()
+
+add_subdirectory(arch)

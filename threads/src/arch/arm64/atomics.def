@@ -1,0 +1,87 @@
+LIBRARY snthreads
+EXPORTS
+	sn_atomic_load_int8_t
+	sn_atomic_store_int8_t
+	sn_atomic_exchange_int8_t
+	sn_atomic_compare_exchange_int8_t
+	sn_atomic_fetch_add_int8_t
+	sn_atomic_fetch_sub_int8_t
+	sn_atomic_fetch_or_int8_t
+	sn_atomic_fetch_xor_int8_t
+	sn_atomic_fetch_and_int8_t
+
+	sn_atomic_load_int16_t
+	sn_atomic_store_int16_t
+	sn_atomic_exchange_int16_t
+	sn_atomic_compare_exchange_int16_t
+	sn_atomic_fetch_add_int16_t
+	sn_atomic_fetch_sub_int16_t
+	sn_atomic_fetch_or_int16_t
+	sn_atomic_fetch_xor_int16_t
+	sn_atomic_fetch_and_int16_t
+
+	sn_atomic_load_int32_t
+	sn_atomic_store_int32_t
+	sn_atomic_exchange_int32_t
+	sn_atomic_compare_exchange_int32_t
+	sn_atomic_fetch_add_int32_t
+	sn_atomic_fetch_sub_int32_t
+	sn_atomic_fetch_or_int32_t
+	sn_atomic_fetch_xor_int32_t
+	sn_atomic_fetch_and_int32_t
+
+	sn_atomic_load_int64_t
+	sn_atomic_store_int64_t
+	sn_atomic_exchange_int64_t
+	sn_atomic_compare_exchange_int64_t
+	sn_atomic_fetch_add_int64_t
+	sn_atomic_fetch_sub_int64_t
+	sn_atomic_fetch_or_int64_t
+	sn_atomic_fetch_xor_int64_t
+	sn_atomic_fetch_and_int64_t
+
+	sn_atomic_load_uint8_t
+	sn_atomic_store_uint8_t
+	sn_atomic_exchange_uint8_t
+	sn_atomic_compare_exchange_uint8_t
+	sn_atomic_fetch_add_uint8_t
+	sn_atomic_fetch_sub_uint8_t
+	sn_atomic_fetch_or_uint8_t
+	sn_atomic_fetch_xor_uint8_t
+	sn_atomic_fetch_and_uint8_t
+
+	sn_atomic_load_uint16_t
+	sn_atomic_store_uint16_t
+	sn_atomic_exchange_uint16_t
+	sn_atomic_compare_exchange_uint16_t
+	sn_atomic_fetch_add_uint16_t
+	sn_atomic_fetch_sub_uint16_t
+	sn_atomic_fetch_or_uint16_t
+	sn_atomic_fetch_xor_uint16_t
+	sn_atomic_fetch_and_uint16_t
+
+	sn_atomic_load_uint32_t
+	sn_atomic_store_uint32_t
+	sn_atomic_exchange_uint32_t
+	sn_atomic_compare_exchange_uint32_t
+	sn_atomic_fetch_add_uint32_t
+	sn_atomic_fetch_sub_uint32_t
+	sn_atomic_fetch_or_uint32_t
+	sn_atomic_fetch_xor_uint32_t
+	sn_atomic_fetch_and_uint32_t
+
+	sn_atomic_load_uint64_t
+	sn_atomic_store_uint64_t
+	sn_atomic_exchange_uint64_t
+	sn_atomic_compare_exchange_uint64_t
+	sn_atomic_fetch_add_uint64_t
+	sn_atomic_fetch_sub_uint64_t
+	sn_atomic_fetch_or_uint64_t
+	sn_atomic_fetch_xor_uint64_t
+	sn_atomic_fetch_and_uint64_t
+
+	sn_atomic_flag_test_and_set_explicit
+	sn_atomic_flag_clear_explicit
+	sn_atomic_flag_load_explicit
+
+	sn_memory_fence

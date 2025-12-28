@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.15...3.31)
 
 project(SnThreads VERSION 0.0.0 DESCRIPTION "Thread and synchronization abstraction library" LANGUAGES C)
 
+if(MSVC)
+    enable_language(ASM_MASM)
+endif()
+
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 17)
