@@ -54,6 +54,13 @@ PUBLIC sn_atomic_flag_load_explicit
 
 PUBLIC sn_memory_fence
 
+PUBLIC sn_pause_instruction
+
+sn_pause_instruction PROC
+	pause
+	ret
+sn_pause_instruction ENDP
+
 PRE_ATOMIC_LOAD_FENCE MACRO memory_order
 	LOCAL no_fence
 	cmp memory_order, 4 ; SN_MEMORY_ORDER_TOTAL_ORDER

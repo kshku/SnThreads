@@ -85,3 +85,4 @@ EXPORTS
 	sn_atomic_flag_load_explicit
 
 	sn_memory_fence
+    sn_pause_instruction
