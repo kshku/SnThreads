@@ -3,6 +3,8 @@ set(HEADERFILES
     defines.h
     snthreads.h
     atomics.h
+    spinlock.h
+    mutex.h
 )
 
 set(SRCS
@@ -10,6 +12,7 @@ set(SRCS
 
 set(SPECIFIC_SRCS
     snthreads.c
+    mutex.c
 )
 
 set(SUBDIRS
