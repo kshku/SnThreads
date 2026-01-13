@@ -1,5 +1,5 @@
 set(SUBDIRS
-    arm64
+    amd64
 )
 
 foreach(subdir IN LISTS SUBDIRS)
