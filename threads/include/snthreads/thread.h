@@ -2,6 +2,8 @@
 
 #include "snthreads/defines.h"
 
+#include "snthreads/api.h"
+
 #if !defined(SN_DISABLE_FAST_TLS)
     #define SN_USE_FAST_TLS
 #endif
@@ -117,3 +119,4 @@ SN_API bool sn_thread_equal(const snThread *t1, const snThread *t2);
  */
 SN_API bool sn_thread_attach(snThread *thread);
 
+#undef SN_API

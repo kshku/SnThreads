@@ -3,6 +3,8 @@
 #include "snthreads/defines.h"
 #include "snthreads/mutex.h"
 
+#include "snthreads/api.h"
+
 #if !defined(SN_DISABLE_FAST_TLS)
     #define SN_USE_FAST_TLS
 #endif
@@ -80,3 +82,4 @@ SN_API void sn_condvar_signal(snCondvar *cv);
  */
 SN_API void sn_condvar_broadcast(snCondvar *cv);
 
+#undef SN_API

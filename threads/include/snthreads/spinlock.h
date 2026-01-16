@@ -3,6 +3,7 @@
 #include "snthreads/defines.h"
 #include "snthreads/atomics.h"
 
+#include "snthreads/api.h"
 
 #if defined(SN_COMPILER_MSVC)
     SN_API void sn_pause_instruction(void);
@@ -50,3 +51,5 @@ typedef sn_atomic_flag sn_spinlock;
  */
 #define sn_spinlock_locked(lock) \
     sn_atomic_flag_load_explicit(lock, SN_MEMORY_ORDER_ACQUIRE)
+
+#undef SN_API

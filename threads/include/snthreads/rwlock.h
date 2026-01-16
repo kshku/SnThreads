@@ -2,6 +2,8 @@
 
 #include "snthreads/defines.h"
 
+#include "snthreads/api.h"
+
 /**
  * @struct snRWLock
  * @brief snRWLock (read write lock) type.
@@ -73,3 +75,4 @@ SN_API bool sn_rwlock_try_write_lock(snRWLock *rw);
  */
 SN_API void sn_rwlock_write_unlock(snRWLock *rw);
 
+#undef SN_API

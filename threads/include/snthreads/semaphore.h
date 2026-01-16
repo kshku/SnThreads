@@ -2,6 +2,8 @@
 
 #include "snthreads/defines.h"
 
+#include "snthreads/api.h"
+
 /**
  * @typedef snSemaphore
  * @brief Counting semaphore.
@@ -49,3 +51,4 @@ SN_API bool sn_semaphore_try_wait(snSemaphore *sem);
  */
 SN_API void sn_semaphore_post(snSemaphore *sem);
 
+#undef SN_API

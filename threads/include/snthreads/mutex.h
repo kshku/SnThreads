@@ -2,6 +2,8 @@
 
 #include "snthreads/defines.h"
 
+#include "snthreads/api.h"
+
 /**
  * @struct snMutex
  * @brief snMutex type.
@@ -48,3 +50,5 @@ SN_API bool sn_mutex_try_lock(snMutex *m);
  * @param m Pointer to the mutex.
  */
 SN_API void sn_mutex_unlock(snMutex *m);
+
+#undef SN_API

@@ -2,6 +2,8 @@
 
 #include "snthreads/defines.h"
 
+#include "snthreads/api.h"
+
 /**
  * @enum snMemoryOrder
  * @brief Memory order constants.
@@ -497,3 +499,5 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
 #undef DECLARE_ATOMIC_FETCH_AND
 #undef DECLARE_ATOMIC_FUNCTIONS
 #undef CREATE_ATOMIC_TYPE
+
+#undef SN_API
