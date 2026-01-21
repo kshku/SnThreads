@@ -8,15 +8,18 @@ typedef struct snMutexWin32 {
     CRITICAL_SECTION cs;
 } snMutexWin32;
 
+#define CS(mutex) (((snMutexWin32 *)(mutex))->cs)
+
 typedef struct snCondvarWin32 {
     CONDITION_VARIABLE cv;
 } snCondvarWin32;
 
+#define CV(condvar) (((snCondvarWin32 *)(condvar))->cv)
+
 SN_STATIC_ASSERT(sizeof(snCondvarWin32) <= sizeof(snCondvar), "snCondvar size is not large enough!");
 
 bool sn_condvar_init(snCondvar *cv) {
-    snCondvarWin32 *c = (snCondvarWin32 *)cv;
-    InitializeConditionVariable(&c->cv);
+    InitializeConditionVariable(&CV(cv));
     return true;
 }
 
@@ -26,21 +29,15 @@ void sn_condvar_deinit(snCondvar *cv) {
 }
 
 void sn_condvar_wait(snCondvar *cv, snMutex *mutex) {
-    snCondvarWin32 *c = (snCondvarWin32 *)cv;
-    snMutexWin32 *m = (snMutexWin32 *)mutex;
-
-    BOOL ok = SleepConditionVariableCS(&c->cv, &m->cs, INFINITE);
+    BOOL ok = SleepConditionVariableCS(&CV(cv), &CS(mutex), INFINITE);
 
     SN_ASSERT(ok && "SleepConditionVariableCS failed");
 }
 
 bool sn_condvar_timed_wait(snCondvar *cv, snMutex *mutex, uint64_t timeout_ns) {
-    snCondvarWin32 *c = (snCondvarWin32 *)cv;
-    snMutexWin32 *m = (snMutexWin32 *)mutex;
-
     DWORD timeout_ms = (DWORD)(timeout_ns / 1000000ull);
 
-    BOOL ok = SleepConditionVariableCS(&c->cv, &m->cs, timeout_ms);
+    BOOL ok = SleepConditionVariableCS(&CV(cv), &CS(mutex), timeout_ms);
 
     if (ok) return true;
 
@@ -49,13 +46,11 @@ bool sn_condvar_timed_wait(snCondvar *cv, snMutex *mutex, uint64_t timeout_ns) {
 }
 
 void sn_condvar_signal(snCondvar *cv) {
-    snCondvarWin32 *c = (snCondvarWin32 *)cv;
-    WakeConditionVariable(&c->cv);
+    WakeConditionVariable(&CV(cv));
 }
 
 void sn_condvar_broadcast(snCondvar *cv) {
-    snCondvarWin32 *c = (snCondvarWin32 *)cv;
-    WakeAllConditionVariable(&c->cv);
+    WakeAllConditionVariable(&CV(cv));
 }
 
 #endif

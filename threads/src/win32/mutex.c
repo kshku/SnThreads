@@ -8,31 +8,29 @@ typedef struct snMutexWin32 {
     CRITICAL_SECTION cs;
 } snMutexWin32;
 
+#define CS(mutex) (((snMutexWin32 *)(mutex))->cs)
+
 SN_STATIC_ASSERT(sizeof(snMutexWin32) <= sizeof(snMutex), "snMutex size is not large enough!");
 
 void sn_mutex_init(snMutex *m) {
-    snMutexWin32 *mutex = (snMutexWin32 *)m;
-    InitializeCriticalSection(&mutex->cs);
+    InitializeCriticalSection(&CS(m));
 }
 
 void sn_mutex_deinit(snMutex *m) {
-    snMutexWin32 *mutex = (snMutexWin32 *)m;
-    DeleteCriticalSection(&mutex->cs);
+    DeleteCriticalSection(&CS(m));
 }
 
 void sn_mutex_lock(snMutex *m) {
-    snMutexWin32 *mutex = (snMutexWin32 *)m;
-    EnterCriticalSection(&mutex->mutex);
+    EnterCriticalSection(&CS(m));
 }
 
 bool sn_mutex_try_lock(snMutex *m) {
-    snMutexWin32 *mutex = (snMutexWin32 *)m;
-    return TryEnterCriticalSection(&mutex->mutex);
+    return TryEnterCriticalSection(&CS(m));
 }
 
 void sn_mutex_unlock(snMutex *m) {
     snMutexWin32 *mutex = (snMutexWin32 *)m;
-    LeaveCriticalSection(&mutex->mutex);
+    LeaveCriticalSection(&CS(m));
 }
 
 #endif

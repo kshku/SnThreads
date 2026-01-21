@@ -3,7 +3,7 @@ if(SN_THREADS_BUILD_SHARED)
     target_compile_definitions(snthreads PRIVATE SN_EXPORT)
 else()
     add_library(snthreads STATIC)
-    target_compile_definitions(snthreads PRIVATE SN_THREADS_STATIC)
+    target_compile_definitions(snthreads PUBLIC SN_THREADS_STATIC)
 endif()
 
 target_include_directories(snthreads PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")

@@ -4,7 +4,7 @@ set(SRCS
 
 if(MSVC)
     set(ASM_SRCS
-        atmoics.asm
+        atomics.asm
     )
 
     list(APPEND SRCS ${ASM_SRCS})
