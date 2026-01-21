@@ -15,7 +15,7 @@ typedef struct snCondvarPthread {
     pthread_cond_t cond;
 } snCondvarPthread;
 
-#define CONDVAR(condvar) (((snCondvaPthread *)(condvar))->cond)
+#define CONDVAR(condvar) (((snCondvarPthread *)(condvar))->cond)
 
 SN_STATIC_ASSERT(sizeof(snCondvarPthread) <= sizeof(snCondvar), "snCondvar size insufficient");
 
