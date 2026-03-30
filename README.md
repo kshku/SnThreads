@@ -1,3 +1,3 @@
-# SnTemplate
+# SnThreads
 
-A repo for quick start with Sn* projects by copy pasting the build and config files.
+A thread abstraction and synchronization tools library written in C.
