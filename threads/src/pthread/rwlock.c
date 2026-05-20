@@ -3,13 +3,13 @@
 
 #if defined(SN_OS_LINUX) || defined(SN_OS_MAC)
 
-#include <pthread.h>
+    #include <pthread.h>
 
 typedef struct snRWLockPthread {
     pthread_rwlock_t rwlock;
 } snRWLockPthread;
 
-#define RWLOCK(lock) (((snRWLockPthread *)(lock))->rwlock)
+    #define RWLOCK(lock) (((snRWLockPthread *)(lock))->rwlock)
 
 SN_STATIC_ASSERT(sizeof(snRWLockPthread) <= sizeof(snRWLock), "snRWLock size is not large enough!");
 

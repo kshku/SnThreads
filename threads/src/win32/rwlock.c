@@ -2,13 +2,13 @@
 
 #if defined(SN_OS_WINDOWS)
 
-#include <windows.h>
+    #include <windows.h>
 
 typedef struct snRWLockWin32 {
     SRWLOCK rwlock;
 } snRWLockWin32;
 
-#define RWLOCK(lock) (((snRWLockWin32 *)(lock))->rwlock)
+    #define RWLOCK(lock) (((snRWLockWin32 *)(lock))->rwlock)
 
 SN_STATIC_ASSERT(sizeof(snRWLockWin32) <= sizeof(snRWLock), "snRWLock size is not large enough!");
 

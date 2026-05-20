@@ -1,20 +1,20 @@
-#include <snthreads/thread.h>
-#include <snthreads/mutex.h>
 #include <snthreads/condvar.h>
-#include <snthreads/semaphore.h>
+#include <snthreads/mutex.h>
 #include <snthreads/rwlock.h>
-
+#include <snthreads/semaphore.h>
+#include <snthreads/thread.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TEST_ASSERT(x) \
-    do { if (!(x)) { \
-        fprintf(stderr, "FAIL: %s:%d: %s\n", __FILE__, __LINE__, #x); \
-        abort(); \
-    }} while (0)
+#define TEST_ASSERT(x)                                                    \
+    do {                                                                  \
+        if (!(x)) {                                                       \
+            fprintf(stderr, "FAIL: %s:%d: %s\n", __FILE__, __LINE__, #x); \
+            abort();                                                      \
+        }                                                                 \
+    } while (0)
 
-#define TEST_PASS(name) \
-    printf("[PASS] %s\n", name)
+#define TEST_PASS(name) printf("[PASS] %s\n", name)
 
 static void *thread_self_test(void *arg) {
     snThread *self = sn_thread_self();
@@ -35,7 +35,7 @@ void test_thread_self_basic(void) {
 }
 
 #define INC_THREADS 8
-#define INC_ITERS   500000
+#define INC_ITERS 500000
 
 static snMutex g_mutex;
 static int g_counter;
@@ -59,8 +59,7 @@ void test_mutex_contention(void) {
     for (int i = 0; i < INC_THREADS; ++i)
         TEST_ASSERT(sn_thread_create(&threads[i], mutex_worker, NULL));
 
-    for (int i = 0; i < INC_THREADS; ++i)
-        TEST_ASSERT(sn_thread_join(&threads[i], NULL));
+    for (int i = 0; i < INC_THREADS; ++i) TEST_ASSERT(sn_thread_join(&threads[i], NULL));
 
     TEST_ASSERT(g_counter == INC_THREADS * INC_ITERS);
 
@@ -71,7 +70,7 @@ void test_mutex_contention(void) {
 
 #define RW_READERS 6
 #define RW_WRITERS 2
-#define RW_ITERS   100000
+#define RW_ITERS 100000
 
 static snRWLock g_rwlock;
 static int g_rw_value;
@@ -103,8 +102,7 @@ void test_rwlock(void) {
     TEST_ASSERT(sn_rwlock_init(&g_rwlock));
     g_rw_value = 0;
 
-    for (int i = 0; i < RW_READERS; ++i)
-        TEST_ASSERT(sn_thread_create(&threads[i], reader, NULL));
+    for (int i = 0; i < RW_READERS; ++i) TEST_ASSERT(sn_thread_create(&threads[i], reader, NULL));
 
     for (int i = 0; i < RW_WRITERS; ++i)
         TEST_ASSERT(sn_thread_create(&threads[RW_READERS + i], writer, NULL));
@@ -127,8 +125,7 @@ static void *cv_waiter(void *arg) {
     (void)arg;
 
     sn_mutex_lock(&cv_mutex);
-    while (!cv_ready)
-        sn_condvar_wait(&cv, &cv_mutex);
+    while (!cv_ready) sn_condvar_wait(&cv, &cv_mutex);
     sn_mutex_unlock(&cv_mutex);
 
     return NULL;
@@ -158,7 +155,7 @@ void test_condvar_wakeup(void) {
 
 #define SEM_PRODUCERS 4
 #define SEM_CONSUMERS 4
-#define SEM_ITEMS     200000
+#define SEM_ITEMS 200000
 
 static snSemaphore sem;
 static snMutex sem_mutex;

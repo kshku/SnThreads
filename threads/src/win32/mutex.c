@@ -2,13 +2,13 @@
 
 #if defined(SN_OS_WINDOWS)
 
-#include <windows.h>
+    #include <windows.h>
 
 typedef struct snMutexWin32 {
     CRITICAL_SECTION cs;
 } snMutexWin32;
 
-#define CS(mutex) (((snMutexWin32 *)(mutex))->cs)
+    #define CS(mutex) (((snMutexWin32 *)(mutex))->cs)
 
 SN_STATIC_ASSERT(sizeof(snMutexWin32) <= sizeof(snMutex), "snMutex size is not large enough!");
 

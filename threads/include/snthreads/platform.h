@@ -22,8 +22,8 @@
     #error "Don't know whether works on this OS!"
 #endif
 
-#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) \
-    || defined(__x86_64) || defined(_M_X64) || defined(_M_AMD64)
+#if defined(__amd64__) || defined(__amd64) || defined(__x86_64__) || defined(__x86_64) \
+    || defined(_M_X64) || defined(_M_AMD64)
     #define SN_ARCH_AMD64
 #else
     #error "Don't know whether works on this architecture"

@@ -1,8 +1,7 @@
 #pragma once
 
-#include "snthreads/defines.h"
-
 #include "snthreads/api.h"
+#include "snthreads/defines.h"
 
 /**
  * @struct snRWLock
@@ -11,7 +10,6 @@
 typedef struct snRWLock {
     alignas(max_align_t) char buffer[80];
 } snRWLock;
-
 
 /**
  * @brief Initialize read write lock.

@@ -2,21 +2,22 @@
 
 #if defined(SN_OS_WINDOWS)
 
-#include <windows.h>
+    #include <windows.h>
 
 typedef struct snMutexWin32 {
     CRITICAL_SECTION cs;
 } snMutexWin32;
 
-#define CS(mutex) (((snMutexWin32 *)(mutex))->cs)
+    #define CS(mutex) (((snMutexWin32 *)(mutex))->cs)
 
 typedef struct snCondvarWin32 {
     CONDITION_VARIABLE cv;
 } snCondvarWin32;
 
-#define CV(condvar) (((snCondvarWin32 *)(condvar))->cv)
+    #define CV(condvar) (((snCondvarWin32 *)(condvar))->cv)
 
-SN_STATIC_ASSERT(sizeof(snCondvarWin32) <= sizeof(snCondvar), "snCondvar size is not large enough!");
+SN_STATIC_ASSERT(sizeof(snCondvarWin32) <= sizeof(snCondvar), "snCondvar size is not large "
+                                                              "enough!");
 
 bool sn_condvar_init(snCondvar *cv) {
     InitializeConditionVariable(&CV(cv));

@@ -2,13 +2,13 @@
 
 #if defined(SN_OS_LINUX) || defined(SN_OS_MAC)
 
-#include <pthread.h>
+    #include <pthread.h>
 
 typedef struct snMutexPthread {
     pthread_mutex_t mutex;
 } snMutexPthread;
 
-#define MUTEX(mtx) (((snMutexPthread *)(mtx))->mutex)
+    #define MUTEX(mtx) (((snMutexPthread *)(mtx))->mutex)
 
 SN_STATIC_ASSERT(sizeof(snMutexPthread) <= sizeof(snMutex), "snMutex size is not large enough!");
 

@@ -2,13 +2,13 @@
 
 #if defined(SN_OS_WINDOWS)
 
-#include <windows.h>
+    #include <windows.h>
 
 typedef struct snSemaphoreWin32 {
     HANDLE handle;
 } snSemaphoreWin32;
 
-#define HDL(semaphore) (((snSemaphoreWin32 *)(semaphore))->handle)
+    #define HDL(semaphore) (((snSemaphoreWin32 *)(semaphore))->handle)
 
 SN_STATIC_ASSERT(sizeof(snSemaphoreWin32) <= sizeof(snSemaphore), "snSemaphore size insufficient");
 

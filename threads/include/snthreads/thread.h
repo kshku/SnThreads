@@ -1,8 +1,7 @@
 #pragma once
 
-#include "snthreads/defines.h"
-
 #include "snthreads/api.h"
+#include "snthreads/defines.h"
 
 #if !defined(SN_DISABLE_FAST_TLS)
     #define SN_USE_FAST_TLS

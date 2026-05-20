@@ -3,6 +3,7 @@
 #include "snthreads/defines.h"
 #include "snthreads/mutex.h"
 
+// Should be included after mutex.h
 #include "snthreads/api.h"
 
 #if !defined(SN_DISABLE_FAST_TLS)
@@ -81,5 +82,3 @@ SN_API void sn_condvar_signal(snCondvar *cv);
  * @param cv Pointer to condvar.
  */
 SN_API void sn_condvar_broadcast(snCondvar *cv);
-
-#undef SN_API

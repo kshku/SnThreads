@@ -2,8 +2,8 @@
 
 #if defined(SN_OS_LINUX) || defined(SN_OS_MAC)
 
-#include "snthreads/mutex.h"
-#include "snthreads/condvar.h"
+    #include "snthreads/condvar.h"
+    #include "snthreads/mutex.h"
 
 typedef struct snSemaphorePthread {
     snMutex mutex;
@@ -11,7 +11,8 @@ typedef struct snSemaphorePthread {
     uint32_t count;
 } snSemaphorePthread;
 
-SN_STATIC_ASSERT(sizeof(snSemaphorePthread) <= sizeof(snSemaphore), "snSemaphore size insufficient");
+SN_STATIC_ASSERT(sizeof(snSemaphorePthread) <= sizeof(snSemaphore), "snSemaphore size "
+                                                                    "insufficient");
 
 bool sn_semaphore_init(snSemaphore *sem, uint32_t initial_count) {
     snSemaphorePthread *s = (snSemaphorePthread *)sem;

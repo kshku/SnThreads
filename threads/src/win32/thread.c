@@ -2,11 +2,11 @@
 
 #if defined(SN_OS_WINDOWS)
 
-#include <windows.h>
+    #include <windows.h>
 
-#ifdef SN_USE_FAST_TLS
-    _Thread_local snThread *tls_fast = NULL;
-#endif
+    #ifdef SN_USE_FAST_TLS
+_Thread_local snThread *tls_fast = NULL;
+    #endif
 
 static snThread main_thread;
 static DWORD tls_os = TLS_OUT_OF_INDEXES;
@@ -34,11 +34,7 @@ bool sn_thread_init(void) {
     if (!tls_init()) return false;
 
     snThreadWin32 *t = (snThreadWin32 *)&main_thread;
-    *t = (snThreadWin32){
-        .handle = GetCurrentThread(),
-        .tid = GetCurrentThreadId(),
-        .detached = true
-    };
+    *t = (snThreadWin32){.handle = GetCurrentThread(), .tid = GetCurrentThreadId(), .detached = true};
 
     tls_set(&main_thread);
 
@@ -46,19 +42,15 @@ bool sn_thread_init(void) {
 }
 
 void sn_thread_shutdown(void) {
-#ifdef SN_USE_FAST_TLS
+    #ifdef SN_USE_FAST_TLS
     tls_fast = NULL;
-#endif
+    #endif
     tls_shutdown();
 }
 
 bool sn_thread_create(snThread *thread, snThreadFn func, void *data) {
     snThreadWin32 *t = (snThreadWin32 *)thread;
-    *t = (snThreadWin32){
-        .fn = func,
-        .data = data,
-        .detached = false
-    };
+    *t = (snThreadWin32){.fn = func, .data = data, .detached = false};
 
     t->handle = CreateThread(NULL, 0, sn_thread_wrapper, t, 0, &t->tid);
 
@@ -115,11 +107,7 @@ bool sn_thread_equal(const snThread *t1, const snThread *t2) {
 bool sn_thread_attach(snThread *thread) {
     snThreadWin32 *t = (snThreadWin32 *)thread;
 
-    *t = (snThreadWin32){
-        .handle = GetCurrentThread(),
-        .tid = GetCurrentThreadId(),
-        .detached = true
-    };
+    *t = (snThreadWin32){.handle = GetCurrentThread(), .tid = GetCurrentThreadId(), .detached = true};
 
     tls_set(thread);
     return true;
@@ -131,25 +119,23 @@ static bool tls_init(void) {
 }
 
 static void tls_shutdown(void) {
-    if (tls_os != TLS_OUT_OF_INDEXES)
-        TlsFree(tls_os);
+    if (tls_os != TLS_OUT_OF_INDEXES) TlsFree(tls_os);
 
     tls_os = TLS_OUT_OF_INDEXES;
 }
 
 static void tls_set(snThread *t) {
-#ifdef SN_USE_FAST_TLS
+    #ifdef SN_USE_FAST_TLS
     tls_fast = t;
-#endif
+    #endif
 
     TlsSetValue(tls_os, t);
 }
 
 static snThread *tls_get(void) {
-#ifdef SN_USE_FAST_TLS
-    if (tls_fast)
-        return tls_fast;
-#endif
+    #ifdef SN_USE_FAST_TLS
+    if (tls_fast) return tls_fast;
+    #endif
 
     return (snThread *)TlsGetValue(tls_os);
 }
@@ -169,9 +155,9 @@ static DWORD WINAPI sn_thread_wrapper(LPVOID args) {
 }
 
 static void thread_detach_self(void) {
-#ifdef SN_USE_FAST_TLS
+    #ifdef SN_USE_FAST_TLS
     tls_fast = NULL;
-#endif
+    #endif
     TlsSetValue(tls_os, NULL);
 }
 

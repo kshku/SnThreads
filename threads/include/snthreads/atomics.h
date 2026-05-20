@@ -1,8 +1,7 @@
 #pragma once
 
-#include "snthreads/defines.h"
-
 #include "snthreads/api.h"
+#include "snthreads/defines.h"
 
 /**
  * @enum snMemoryOrder
@@ -13,15 +12,13 @@
  */
 typedef enum snMemoryOrder {
     SN_MEMORY_ORDER_NONE, /**< No memory order */
-    SN_MEMORY_ORDER_RELAXED =
-        SN_MEMORY_ORDER_NONE, /**< Alias for SN_MEMORY_ORDER_NONE */
+    SN_MEMORY_ORDER_RELAXED = SN_MEMORY_ORDER_NONE, /**< Alias for SN_MEMORY_ORDER_NONE */
     SN_MEMORY_ORDER_ACQUIRE, /**< Acquire operation */
     SN_MEMORY_ORDER_RELEASE, /**< Release operation */
     SN_MEMORY_ORDER_ACQ_REL, /**< Both acquire and release operation */
     SN_MEMORY_ORDER_TOTAL_ORDER, /**< Total ordering */
-    SN_MEMORY_ORDER_SEQ_CST =
-        SN_MEMORY_ORDER_TOTAL_ORDER /**< Alias for SN_MEMORY_ORDER_TOTAL_ORDER
-                                     */
+    SN_MEMORY_ORDER_SEQ_CST = SN_MEMORY_ORDER_TOTAL_ORDER /**< Alias for SN_MEMORY_ORDER_TOTAL_ORDER
+                                                           */
 } snMemoryOrder;
 
 /**
@@ -49,15 +46,15 @@ SN_API void sn_memory_fence(snMemoryOrder fence);
  * @param name The name like store, load, etc
  * @param type The type for which to get the funciton
  */
-#define SN_GET_ATOMIC_FUNCTION(name, type) \
+#define SN_GET_ATOMIC_FUNCTION(name, type)                          \
     SN_CONCAT_EXPANDED3(SN_ATOMIC_PREFIX, SN_CONCAT(name, _), type)
 
 /**
  * @brief Atomic flags type.
  */
 typedef struct sn_atomic_flag {
-        SN_STATIC_ASSERT(alignof(bool) <= 8, "Align of bool is > 8 bytes!");
-        alignas(alignof(bool)) volatile bool flag;
+    SN_STATIC_ASSERT(alignof(bool) <= 8, "Align of bool is > 8 bytes!");
+    alignas(alignof(bool)) volatile bool flag;
 } sn_atomic_flag;
 
 /**
@@ -70,8 +67,7 @@ typedef struct sn_atomic_flag {
  *
  * @return Value of the flag before setting it.
  */
-SN_API bool sn_atomic_flag_test_and_set_explicit(
-    volatile sn_atomic_flag *obj, snMemoryOrder memory_order);
+SN_API bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order);
 
 /**
  * @brief Clear(unset) the atomic flag with given memory order.
@@ -79,8 +75,7 @@ SN_API bool sn_atomic_flag_test_and_set_explicit(
  * @param obj The atomic flag to be cleared
  * @param memory_order The memory order to use
  */
-SN_API void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj,
-                                               snMemoryOrder memory_order);
+SN_API void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order);
 
 /**
  * @brief Load the value in the atomic flag with given memory order.
@@ -93,29 +88,26 @@ SN_API void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj,
  *
  * @return Returns true if flag is set, else false.
  */
-SN_API bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj,
-                                            snMemoryOrder memory_order);
+SN_API bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order);
 
 /**
  * @brief TAS with default memory order.
  * Refer sn_atomic_flag_test_and_set_explicit
  */
-#define sn_atomic_flag_test_and_set(obj) \
+#define sn_atomic_flag_test_and_set(obj)                            \
     sn_atomic_flag_test_and_set_explicit(obj, SN_MEMORY_ORDER_NONE)
 
 /**
  * @brief Clear the atomic flag with default memory order.
  * Refer sn_atomic_flag_clear_explicit
  */
-#define sn_atomic_flag_clear(obj) \
-    sn_atomic_flag_clear_explicit(obj, SN_MEMORY_ORDER_NONE)
+#define sn_atomic_flag_clear(obj) sn_atomic_flag_clear_explicit(obj, SN_MEMORY_ORDER_NONE)
 
 /**
  * @brief Load the value in the atomic flag with default memory order.
  * Refer sn_atomic_flag_load_explicit
  */
-#define sn_atomic_flag_load(obj) \
-    sn_atomic_flag_load_explicit(obj, SN_MEMORY_ORDER_NONE)
+#define sn_atomic_flag_load(obj) sn_atomic_flag_load_explicit(obj, SN_MEMORY_ORDER_NONE)
 
 /**
  * @brief Initialize the atomic flag variable.
@@ -127,86 +119,75 @@ SN_API bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj,
  *
  * @note The align(type) should be less than or equal to 8 bytes.
  */
-#define DEFINE_ATOMIC_TYPE(type)                                     \
-    typedef struct SN_GET_ATOMIC_TYPE(type) {                           \
-            SN_STATIC_ASSERT(                                        \
-                alignof(type) <= 8,                                  \
-                "Cannot create a atomic type for type with alignof " \
-                "> 8 bytes!");                                       \
-            alignas(alignof(type)) volatile type value;              \
+#define DEFINE_ATOMIC_TYPE(type)                                                                  \
+    typedef struct SN_GET_ATOMIC_TYPE(type) {                                                     \
+        SN_STATIC_ASSERT(alignof(type) <= 8, "Cannot create a atomic type for type with alignof " \
+                                             "> 8 bytes!");                                       \
+        alignas(alignof(type)) volatile type value;                                               \
     } SN_GET_ATOMIC_TYPE(type)
 
 /**
  * @brief Declare atomic load function for given type.
  */
-#define DECLARE_ATOMIC_LOAD(type)                     \
-    SN_API type SN_GET_ATOMIC_FUNCTION(load, type)( \
-        const volatile SN_GET_ATOMIC_TYPE(type) * obj,   \
-        snMemoryOrder memory_order)
+#define DECLARE_ATOMIC_LOAD(type)                                                  \
+    SN_API type SN_GET_ATOMIC_FUNCTION(load, type)(                                \
+        const volatile SN_GET_ATOMIC_TYPE(type) * obj, snMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic store function for given type.
  */
-#define DECLARE_ATOMIC_STORE(type)                        \
-    SN_API void SN_GET_ATOMIC_FUNCTION(store, type)(    \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, \
-        snMemoryOrder memory_order)
+#define DECLARE_ATOMIC_STORE(type)                                                       \
+    SN_API void SN_GET_ATOMIC_FUNCTION(store, type)(                                     \
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic exchange function for given type.
  */
-#define DECLARE_ATOMIC_EXCHANGE(type)                     \
-    SN_API type SN_GET_ATOMIC_FUNCTION(exchange, type)( \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, \
-        snMemoryOrder memory_order)
+#define DECLARE_ATOMIC_EXCHANGE(type)                                                    \
+    SN_API type SN_GET_ATOMIC_FUNCTION(exchange, type)(                                  \
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic compare exchange function for given type.
  */
-#define DECLARE_ATOMIC_COMPARE_EXCHANGE(type)                            \
-    SN_API bool SN_GET_ATOMIC_FUNCTION(compare_exchange, type)(          \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type * expect, type value, \
-        snMemoryOrder success, snMemoryOrder fail)
+#define DECLARE_ATOMIC_COMPARE_EXCHANGE(type)                   \
+    SN_API bool SN_GET_ATOMIC_FUNCTION(compare_exchange, type)( \
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type * expect, type value, snMemoryOrder success, snMemoryOrder fail)
 
 /**
  * @brief Declare atomic fetch_add function for given type.
  */
-#define DECLARE_ATOMIC_FETCH_ADD(type)                     \
-    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_add, type)( \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value,  \
-        snMemoryOrder memory_order)
+#define DECLARE_ATOMIC_FETCH_ADD(type)                                                   \
+    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_add, type)(                                 \
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic fetch_sub function for given type.
  */
-#define DECLARE_ATOMIC_FETCH_SUB(type)                     \
-    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_sub, type)( \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value,  \
-        snMemoryOrder memory_order)
+#define DECLARE_ATOMIC_FETCH_SUB(type)                                                   \
+    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_sub, type)(                                 \
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic fetch_or function for given type.
  */
-#define DECLARE_ATOMIC_FETCH_OR(type)                     \
-    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_or, type)( \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, \
-        snMemoryOrder memory_order)
+#define DECLARE_ATOMIC_FETCH_OR(type)                                                    \
+    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_or, type)(                                  \
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic fetch_xor function for given type.
  */
-#define DECLARE_ATOMIC_FETCH_XOR(type)                     \
-    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_xor, type)( \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value,  \
-        snMemoryOrder memory_order)
+#define DECLARE_ATOMIC_FETCH_XOR(type)                                                   \
+    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_xor, type)(                                 \
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic fetch_and function for given type.
  */
-#define DECLARE_ATOMIC_FETCH_AND(type)                     \
-    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_and, type)( \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value,  \
-        snMemoryOrder memory_order)
+#define DECLARE_ATOMIC_FETCH_AND(type)                                                   \
+    SN_API type SN_GET_ATOMIC_FUNCTION(fetch_and, type)(                                 \
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
 
 /**
  * @brief Declare all the atomic functions for given type.
@@ -225,8 +206,8 @@ SN_API bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj,
 /**
  * @brief Creates the atomic type with all function declarations.
  */
-#define CREATE_ATOMIC_TYPE(type) \
-    DEFINE_ATOMIC_TYPE(type);    \
+#define CREATE_ATOMIC_TYPE(type)   \
+    DEFINE_ATOMIC_TYPE(type);      \
     DECLARE_ATOMIC_FUNCTIONS(type)
 
 CREATE_ATOMIC_TYPE(int8_t);
@@ -262,33 +243,33 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
 /**
  * @brief Get the atomic function for given object type.
  */
-#define SN_GET_GENERIC_ATOMIC_FUNCTION(obj, name)                    \
-    _Generic((obj),                                               \
-        SN_GET_ATOMIC_TYPE(int8_t) *: SN_GET_ATOMIC_FUNCTION(name, int8_t),     \
-        SN_GET_ATOMIC_TYPE(int16_t) *: SN_GET_ATOMIC_FUNCTION(name, int16_t),   \
-        SN_GET_ATOMIC_TYPE(int32_t) *: SN_GET_ATOMIC_FUNCTION(name, int32_t),   \
-        SN_GET_ATOMIC_TYPE(int64_t) *: SN_GET_ATOMIC_FUNCTION(name, int64_t),   \
-                                                                  \
-        SN_GET_ATOMIC_TYPE(int_fast8_t) *: SN_GET_ATOMIC_FUNCTION(name, int_fast8_t),   \
-        SN_GET_ATOMIC_TYPE(int_fast16_t) *: SN_GET_ATOMIC_FUNCTION(name, int_fast16_t), \
-        SN_GET_ATOMIC_TYPE(int_fast32_t) *: SN_GET_ATOMIC_FUNCTION(name, int_fast32_t), \
-        SN_GET_ATOMIC_TYPE(int_fast64_t) *: SN_GET_ATOMIC_FUNCTION(name, int_fast64_t), \
-                                                                  \
-        SN_GET_ATOMIC_TYPE(int_least8_t) *: SN_GET_ATOMIC_FUNCTION(name, int_least8_t),   \
-        SN_GET_ATOMIC_TYPE(int_least16_t) *: SN_GET_ATOMIC_FUNCTION(name, int_least16_t), \
-        SN_GET_ATOMIC_TYPE(int_least32_t) *: SN_GET_ATOMIC_FUNCTION(name, int_least32_t), \
-        SN_GET_ATOMIC_TYPE(int_least64_t) *: SN_GET_ATOMIC_FUNCTION(name, int_least64_t), \
-                                                                  \
-        SN_GET_ATOMIC_TYPE(uint8_t) *: SN_GET_ATOMIC_FUNCTION(name, uint8_t),     \
-        SN_GET_ATOMIC_TYPE(uint16_t) *: SN_GET_ATOMIC_FUNCTION(name, uint16_t),   \
-        SN_GET_ATOMIC_TYPE(uint32_t) *: SN_GET_ATOMIC_FUNCTION(name, uint32_t),   \
-        SN_GET_ATOMIC_TYPE(uint64_t) *: SN_GET_ATOMIC_FUNCTION(name, uint64_t),   \
-                                                                  \
-        SN_GET_ATOMIC_TYPE(uint_fast8_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_fast8_t),   \
-        SN_GET_ATOMIC_TYPE(uint_fast16_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_fast16_t), \
-        SN_GET_ATOMIC_TYPE(uint_fast32_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_fast32_t), \
-        SN_GET_ATOMIC_TYPE(uint_fast64_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_fast64_t), \
-                                                                  \
+#define SN_GET_GENERIC_ATOMIC_FUNCTION(obj, name)                                           \
+    _Generic((obj),                                                                         \
+        SN_GET_ATOMIC_TYPE(int8_t) *: SN_GET_ATOMIC_FUNCTION(name, int8_t),                 \
+        SN_GET_ATOMIC_TYPE(int16_t) *: SN_GET_ATOMIC_FUNCTION(name, int16_t),               \
+        SN_GET_ATOMIC_TYPE(int32_t) *: SN_GET_ATOMIC_FUNCTION(name, int32_t),               \
+        SN_GET_ATOMIC_TYPE(int64_t) *: SN_GET_ATOMIC_FUNCTION(name, int64_t),               \
+                                                                                            \
+        SN_GET_ATOMIC_TYPE(int_fast8_t) *: SN_GET_ATOMIC_FUNCTION(name, int_fast8_t),       \
+        SN_GET_ATOMIC_TYPE(int_fast16_t) *: SN_GET_ATOMIC_FUNCTION(name, int_fast16_t),     \
+        SN_GET_ATOMIC_TYPE(int_fast32_t) *: SN_GET_ATOMIC_FUNCTION(name, int_fast32_t),     \
+        SN_GET_ATOMIC_TYPE(int_fast64_t) *: SN_GET_ATOMIC_FUNCTION(name, int_fast64_t),     \
+                                                                                            \
+        SN_GET_ATOMIC_TYPE(int_least8_t) *: SN_GET_ATOMIC_FUNCTION(name, int_least8_t),     \
+        SN_GET_ATOMIC_TYPE(int_least16_t) *: SN_GET_ATOMIC_FUNCTION(name, int_least16_t),   \
+        SN_GET_ATOMIC_TYPE(int_least32_t) *: SN_GET_ATOMIC_FUNCTION(name, int_least32_t),   \
+        SN_GET_ATOMIC_TYPE(int_least64_t) *: SN_GET_ATOMIC_FUNCTION(name, int_least64_t),   \
+                                                                                            \
+        SN_GET_ATOMIC_TYPE(uint8_t) *: SN_GET_ATOMIC_FUNCTION(name, uint8_t),               \
+        SN_GET_ATOMIC_TYPE(uint16_t) *: SN_GET_ATOMIC_FUNCTION(name, uint16_t),             \
+        SN_GET_ATOMIC_TYPE(uint32_t) *: SN_GET_ATOMIC_FUNCTION(name, uint32_t),             \
+        SN_GET_ATOMIC_TYPE(uint64_t) *: SN_GET_ATOMIC_FUNCTION(name, uint64_t),             \
+                                                                                            \
+        SN_GET_ATOMIC_TYPE(uint_fast8_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_fast8_t),     \
+        SN_GET_ATOMIC_TYPE(uint_fast16_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_fast16_t),   \
+        SN_GET_ATOMIC_TYPE(uint_fast32_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_fast32_t),   \
+        SN_GET_ATOMIC_TYPE(uint_fast64_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_fast64_t),   \
+                                                                                            \
         SN_GET_ATOMIC_TYPE(uint_least8_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_least8_t),   \
         SN_GET_ATOMIC_TYPE(uint_least16_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_least16_t), \
         SN_GET_ATOMIC_TYPE(uint_least32_t) *: SN_GET_ATOMIC_FUNCTION(name, uint_least32_t), \
@@ -308,7 +289,7 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  * Memory order should be one of SN_MEMORY_ORDER_NONE, SN_MEMORY_ORDER_ACQUIRE,
  * SN_MEMORY_ORDER_TOTAL_ORDER.
  */
-#define sn_atomic_load_explicit(obj, memory_order) \
+#define sn_atomic_load_explicit(obj, memory_order)               \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, load)(obj, memory_order)
 
 /**
@@ -317,50 +298,49 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  * Memory order should be one of SN_MEMORY_ORDER_NONE, SN_MEMORY_ORDER_RELEASE,
  * SN_MEMORY_ORDER_TOTAL_ORDER.
  */
-#define sn_atomic_store_explicit(obj, value, memory_order) \
+#define sn_atomic_store_explicit(obj, value, memory_order)               \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, store)(obj, value, memory_order)
 
 /**
  * @brief Atomic exchange operation.
  */
-#define sn_atomic_exchange_explicit(obj, value, memory_order) \
+#define sn_atomic_exchange_explicit(obj, value, memory_order)               \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, exchange)(obj, value, memory_order)
 
 /**
  * @brief Atomic comapre exchange operation.
  */
-#define sn_atomic_compare_exchange_explicit(obj, expect, value, success, fail) \
-    get_generic_atomic_function(obj, compare_exchange)(obj, expect, value,     \
-                                                       success, fail)
+#define sn_atomic_compare_exchange_explicit(obj, expect, value, success, fail)            \
+    get_generic_atomic_function(obj, compare_exchange)(obj, expect, value, success, fail)
 
 /**
  * @brief Atomic fetch_add operation.
  */
-#define sn_atomic_fetch_add_explicit(obj, value, memory_order) \
+#define sn_atomic_fetch_add_explicit(obj, value, memory_order)               \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_add)(obj, value, memory_order)
 
 /**
  * @brief Atomic fetch_sub operation.
  */
-#define sn_atomic_fetch_sub_explicit(obj, value, memory_order) \
+#define sn_atomic_fetch_sub_explicit(obj, value, memory_order)               \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_sub)(obj, value, memory_order)
 
 /**
  * @brief Atomic fetch_or operation.
  */
-#define sn_atomic_fetch_or_explicit(obj, value, memory_order) \
+#define sn_atomic_fetch_or_explicit(obj, value, memory_order)               \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_or)(obj, value, memory_order)
 
 /**
  * @brief Atomic fetch_xor operation.
  */
-#define sn_atomic_fetch_xor_explicit(obj, value, memory_order) \
+#define sn_atomic_fetch_xor_explicit(obj, value, memory_order)               \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_xor)(obj, value, memory_order)
 
 /**
  * @brief Atomic fetch_and operation.
  */
-#define sn_atomic_fetch_and_explicit(obj, value, memory_order) \
+#define sn_atomic_fetch_and_explicit(obj, value, memory_order)               \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_and)(obj, value, memory_order)
 
 /**
@@ -372,8 +352,7 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  *
  * @return Returns value stored in the atomic object.
  */
-#define sn_atomic_load(obj) \
-    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, load)(obj, SN_MEMORY_ORDER_NONE)
+#define sn_atomic_load(obj) SN_GET_GENERIC_ATOMIC_FUNCTION(obj, load)(obj, SN_MEMORY_ORDER_NONE)
 
 /**
  * @brief Atomic stroe operation with default memory order.
@@ -383,7 +362,7 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  * @param obj Atomic object to store the value
  * @param value The value to store
  */
-#define sn_atomic_store(obj, value) \
+#define sn_atomic_store(obj, value)                                              \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, store)(obj, value, SN_MEMORY_ORDER_NONE)
 
 /**
@@ -396,7 +375,7 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  *
  * @return Returns the previous value in the atomic object.
  */
-#define sn_atomic_exchange(obj, value) \
+#define sn_atomic_exchange(obj, value)                                              \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, exchange)(obj, value, SN_MEMORY_ORDER_NONE)
 
 /**
@@ -414,9 +393,8 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  *
  * @return Returns true if the value is exchanged else false.
  */
-#define sn_atomic_compare_exchange(obj, expect, value)  \
-    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, compare_exchange)( \
-        obj, expect, value, SN_MEMORY_ORDER_NONE, SN_MEMORY_ORDER_NONE)
+#define sn_atomic_compare_exchange(obj, expect, value) \
+    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, compare_exchange)(obj, expect, value, SN_MEMORY_ORDER_NONE, SN_MEMORY_ORDER_NONE)
 
 /**
  * @brief Atomic fetch_add operation with default memory order.
@@ -428,9 +406,8 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  *
  * @return Previous value in the atomic object.
  */
-#define sn_atomic_fetch_add(obj, value)                     \
-    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_add)(obj, value, \
-                                                SN_MEMORY_ORDER_NONE)
+#define sn_atomic_fetch_add(obj, value)                                              \
+    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_add)(obj, value, SN_MEMORY_ORDER_NONE)
 
 /**
  * @brief Atomic fetch_sub operation with default memory order.
@@ -442,9 +419,8 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  *
  * @return Previous value of the atomic object.
  */
-#define sn_atomic_fetch_sub(obj, value)                     \
-    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_sub)(obj, value, \
-                                                SN_MEMORY_ORDER_NONE)
+#define sn_atomic_fetch_sub(obj, value)                                              \
+    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_sub)(obj, value, SN_MEMORY_ORDER_NONE)
 
 /**
  * @brief Atomic fetch_or operation with default memory order.
@@ -456,7 +432,7 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  *
  * @return Returns the previous value of atomic object.
  */
-#define sn_atomic_fetch_or(obj, value) \
+#define sn_atomic_fetch_or(obj, value)                                              \
     SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_or)(obj, value, SN_MEMORY_ORDER_NONE)
 
 /**
@@ -469,9 +445,8 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  *
  * @return Returns the previous value of atomic object.
  */
-#define sn_atomic_fetch_xor(obj, value)                     \
-    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_xor)(obj, value, \
-                                                SN_MEMORY_ORDER_NONE)
+#define sn_atomic_fetch_xor(obj, value)                                              \
+    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_xor)(obj, value, SN_MEMORY_ORDER_NONE)
 
 /**
  * @brief Atomic fetch_and operation with default memory order.
@@ -483,9 +458,8 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
  *
  * @return Returns the previous value of atomic object.
  */
-#define sn_atomic_fetch_and(obj, value)                     \
-    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_and)(obj, value, \
-                                                SN_MEMORY_ORDER_NONE)
+#define sn_atomic_fetch_and(obj, value)                                              \
+    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, fetch_and)(obj, value, SN_MEMORY_ORDER_NONE)
 
 #undef DEFINE_ATOMIC_TYPE
 #undef DECLARE_ATOMIC_LOAD

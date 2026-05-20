@@ -2,11 +2,11 @@
 
 #if defined(SN_OS_LINUX) || defined(SN_OS_MAC)
 
-#include <pthread.h>
+    #include <pthread.h>
 
-#ifdef SN_USE_FAST_TLS
-    _Thread_local snThread *tls_fast = NULL;
-#endif
+    #ifdef SN_USE_FAST_TLS
+_Thread_local snThread *tls_fast = NULL;
+    #endif
 
 static snThread main_thread;
 static pthread_key_t tls_os;
@@ -25,10 +25,10 @@ typedef struct snThreadPthread {
     pthread_t thread;
 } snThreadPthread;
 
-/**
- * @brief Get pthread_t from (snThread *).
- */
-#define GET_PTHREAD(t) (((snThreadPthread *)(t))->thread)
+    /**
+     * @brief Get pthread_t from (snThread *).
+     */
+    #define GET_PTHREAD(t) (((snThreadPthread *)(t))->thread)
 
 SN_STATIC_ASSERT(sizeof(snThreadPthread) <= sizeof(snThread), "snThread size is not large enough!");
 
@@ -36,9 +36,7 @@ bool sn_thread_init(void) {
     if (!tls_init()) return false;
 
     snThreadPthread *t = (snThreadPthread *)&main_thread;
-    *t = (snThreadPthread){
-        .thread = pthread_self()
-    };
+    *t = (snThreadPthread){.thread = pthread_self()};
 
     tls_set(&main_thread);
 
@@ -46,18 +44,15 @@ bool sn_thread_init(void) {
 }
 
 void sn_thread_shutdown(void) {
-#ifdef SN_USE_FAST_TLS
+    #ifdef SN_USE_FAST_TLS
     tls_fast = NULL;
-#endif
+    #endif
     tls_shutdown();
 }
 
 bool sn_thread_create(snThread *thread, snThreadFn func, void *data) {
     snThreadPthread *t = (snThreadPthread *)thread;
-    *t = (snThreadPthread){
-        .fn = func,
-        .data = data
-    };
+    *t = (snThreadPthread){.fn = func, .data = data};
 
     return pthread_create(&GET_PTHREAD(thread), NULL, sn_thread_wrapper, t) == 0;
 }
@@ -88,9 +83,7 @@ bool sn_thread_equal(const snThread *t1, const snThread *t2) {
 
 bool sn_thread_attach(snThread *thread) {
     snThreadPthread *t = (snThreadPthread *)thread;
-    *t = (snThreadPthread){
-        .thread = pthread_self()
-    };
+    *t = (snThreadPthread){.thread = pthread_self()};
 
     tls_set(thread);
     return true;
@@ -105,18 +98,17 @@ static void tls_shutdown(void) {
 }
 
 static void tls_set(snThread *t) {
-#ifdef SN_USE_FAST_TLS
+    #ifdef SN_USE_FAST_TLS
     tls_fast = t;
-#endif
+    #endif
 
     pthread_setspecific(tls_os, t);
 }
 
 static snThread *tls_get(void) {
-#ifdef SN_USE_FAST_TLS
-    if (tls_fast)
-        return tls_fast;
-#endif
+    #ifdef SN_USE_FAST_TLS
+    if (tls_fast) return tls_fast;
+    #endif
 
     return (snThread *)pthread_getspecific(tls_os);
 }
@@ -134,9 +126,9 @@ static void *sn_thread_wrapper(void *args) {
 }
 
 static void thread_detach_self(void) {
-#ifdef SN_USE_FAST_TLS
+    #ifdef SN_USE_FAST_TLS
     tls_fast = NULL;
-#endif
+    #endif
     pthread_setspecific(tls_os, NULL);
 }
 
