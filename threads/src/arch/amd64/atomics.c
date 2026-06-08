@@ -594,7 +594,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
                 volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
                 PRE_ATOMIC_STORE_FENCE(memory_order);                                              \
                                                                                                    \
-                __asm__ volatile("mov %[value], %[obj]"                                            \
+                __asm__ volatile("mov%z1 %[value], %[obj]"                                           \
                                  : [obj] "=m"(obj->value)                                          \
                                  : [value] "ir"(value)                                             \
                                  : "memory");                                                      \
@@ -774,7 +774,7 @@ void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, snMemoryOrder m
     PRE_ATOMIC_RMW_FENCE(memory_order);
 
     bool reset = false;
-    __asm__ volatile("mov %[value], %[flag]"
+    __asm__ volatile("movb %[value], %[flag]"
                      : [flag] "=m"(obj->flag)
                      : [value] "ir"(reset)
                      : "memory");
