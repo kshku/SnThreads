@@ -10,7 +10,7 @@
          */
         #define DEFINE_ATOMIC_SFL_LOAD(type)                                                 \
             type SN_GET_ATOMIC_FUNCTION(load, type)(                                         \
-                const volatile SN_GET_ATOMIC_TYPE(type) * obj, snMemoryOrder memory_order) { \
+                const volatile SN_GET_ATOMIC_TYPE(type) * obj, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                      \
                     case 1:                                                                  \
                         return (type)SN_GET_ATOMIC_FUNCTION(load, int8_t)(                   \
@@ -34,7 +34,7 @@
          */
         #define DEFINE_ATOMIC_UFL_LOAD(type)                                                 \
             type SN_GET_ATOMIC_FUNCTION(load, type)(                                         \
-                const volatile SN_GET_ATOMIC_TYPE(type) * obj, snMemoryOrder memory_order) { \
+                const volatile SN_GET_ATOMIC_TYPE(type) * obj, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                      \
                     case 1:                                                                  \
                         return (type)SN_GET_ATOMIC_FUNCTION(load, uint8_t)(                  \
@@ -58,7 +58,7 @@
          */
         #define DEFINE_ATOMIC_SFL_STORE(type)                                                      \
             void SN_GET_ATOMIC_FUNCTION(store, type)(                                              \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         SN_GET_ATOMIC_FUNCTION(store, int8_t)(                                     \
@@ -86,7 +86,7 @@
          */
         #define DEFINE_ATOMIC_UFL_STORE(type)                                                      \
             void SN_GET_ATOMIC_FUNCTION(store, type)(                                              \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         SN_GET_ATOMIC_FUNCTION(store, uint8_t)(                                    \
@@ -114,7 +114,7 @@
          */
         #define DEFINE_ATOMIC_SFL_EXCHANGE(type)                                                   \
             type SN_GET_ATOMIC_FUNCTION(exchange, type)(                                           \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(exchange, int8_t)(                     \
@@ -138,7 +138,7 @@
          */
         #define DEFINE_ATOMIC_UFL_EXCHANGE(type)                                                   \
             type SN_GET_ATOMIC_FUNCTION(exchange, type)(                                           \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(exchange, uint8_t)(                    \
@@ -163,7 +163,7 @@
         #define DEFINE_ATOMIC_SFL_COMPARE_EXCHANGE(type)                                                        \
             bool SN_GET_ATOMIC_FUNCTION(compare_exchange, type)(                                                \
                 volatile SN_GET_ATOMIC_TYPE(type) * obj, type * expect, type value,                             \
-                snMemoryOrder success, snMemoryOrder fail) {                                                    \
+                SnMemoryOrder success, SnMemoryOrder fail) {                                                    \
                 switch (sizeof(type)) {                                                                         \
                     case 1:                                                                                     \
                         return (type)SN_GET_ATOMIC_FUNCTION(compare_exchange, int8_t)(                          \
@@ -191,7 +191,7 @@
         #define DEFINE_ATOMIC_UFL_COMPARE_EXCHANGE(type)                                           \
             bool SN_GET_ATOMIC_FUNCTION(compare_exchange, type)(                                   \
                 volatile SN_GET_ATOMIC_TYPE(type) * obj, type * expect, type value,                \
-                snMemoryOrder success, snMemoryOrder fail) {                                       \
+                SnMemoryOrder success, SnMemoryOrder fail) {                                       \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(compare_exchange, uint8_t)(            \
@@ -219,7 +219,7 @@
          */
         #define DEFINE_ATOMIC_SFL_FETCH_ADD(type)                                                  \
             type SN_GET_ATOMIC_FUNCTION(fetch_add, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_add, int8_t)(                    \
@@ -243,7 +243,7 @@
          */
         #define DEFINE_ATOMIC_UFL_FETCH_ADD(type)                                                  \
             type SN_GET_ATOMIC_FUNCTION(fetch_add, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_add, uint8_t)(                   \
@@ -267,7 +267,7 @@
          */
         #define DEFINE_ATOMIC_SFL_FETCH_SUB(type)                                                  \
             type SN_GET_ATOMIC_FUNCTION(fetch_sub, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_sub, int8_t)(                    \
@@ -291,7 +291,7 @@
          */
         #define DEFINE_ATOMIC_UFL_FETCH_SUB(type)                                                  \
             type SN_GET_ATOMIC_FUNCTION(fetch_sub, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_sub, uint8_t)(                   \
@@ -315,7 +315,7 @@
          */
         #define DEFINE_ATOMIC_SFL_FETCH_OR(type)                                                   \
             type SN_GET_ATOMIC_FUNCTION(fetch_or, type)(                                           \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_or, int8_t)(                     \
@@ -339,7 +339,7 @@
          */
         #define DEFINE_ATOMIC_UFL_FETCH_OR(type)                                                   \
             type SN_GET_ATOMIC_FUNCTION(fetch_or, type)(                                           \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_or, uint8_t)(                    \
@@ -363,7 +363,7 @@
          */
         #define DEFINE_ATOMIC_SFL_FETCH_XOR(type)                                                  \
             type SN_GET_ATOMIC_FUNCTION(fetch_xor, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_xor, int8_t)(                    \
@@ -387,7 +387,7 @@
          */
         #define DEFINE_ATOMIC_UFL_FETCH_XOR(type)                                                  \
             type SN_GET_ATOMIC_FUNCTION(fetch_xor, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_xor, uint8_t)(                   \
@@ -411,7 +411,7 @@
          */
         #define DEFINE_ATOMIC_SFL_FETCH_AND(type)                                                  \
             type SN_GET_ATOMIC_FUNCTION(fetch_and, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_and, int8_t)(                    \
@@ -435,7 +435,7 @@
          */
         #define DEFINE_ATOMIC_UFL_FETCH_AND(type)                                                  \
             type SN_GET_ATOMIC_FUNCTION(fetch_and, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 switch (sizeof(type)) {                                                            \
                     case 1:                                                                        \
                         return (type)SN_GET_ATOMIC_FUNCTION(fetch_and, uint8_t)(                   \
@@ -573,7 +573,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
          */
         #define DEFINE_ATOMIC_LOAD(type)                                                     \
             type SN_GET_ATOMIC_FUNCTION(load, type)(                                         \
-                const volatile SN_GET_ATOMIC_TYPE(type) * obj, snMemoryOrder memory_order) { \
+                const volatile SN_GET_ATOMIC_TYPE(type) * obj, SnMemoryOrder memory_order) { \
                 PRE_ATOMIC_LOAD_FENCE(memory_order);                                         \
                                                                                              \
                 type value;                                                                  \
@@ -591,7 +591,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
          */
         #define DEFINE_ATOMIC_STORE(type)                                                          \
             void SN_GET_ATOMIC_FUNCTION(store, type)(                                              \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 PRE_ATOMIC_STORE_FENCE(memory_order);                                              \
                                                                                                    \
                 __asm__ volatile("mov%z1 %[value], %[obj]"                                           \
@@ -607,7 +607,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
          */
         #define DEFINE_ATOMIC_EXCHANGE(type)                                                       \
             type SN_GET_ATOMIC_FUNCTION(exchange, type)(                                           \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 SN_UNUSED(memory_order);                                                           \
                                                                                                    \
                 __asm__ volatile("lock xchg %[obj], %[value]"                                      \
@@ -623,7 +623,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
         #define DEFINE_ATOMIC_COMPARE_EXCHANGE(type)                                \
             bool SN_GET_ATOMIC_FUNCTION(compare_exchange, type)(                    \
                 volatile SN_GET_ATOMIC_TYPE(type) * obj, type * expect, type value, \
-                snMemoryOrder success, snMemoryOrder fail) {                        \
+                SnMemoryOrder success, SnMemoryOrder fail) {                        \
                 SN_UNUSED(success);                                                 \
                 SN_UNUSED(fail);                                                    \
                                                                                     \
@@ -647,7 +647,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
          */
         #define DEFINE_ATOMIC_FETCH_ADD(type)                                                      \
             type SN_GET_ATOMIC_FUNCTION(fetch_add, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 SN_UNUSED(memory_order);                                                           \
                 __asm__ volatile("lock xadd %[value], %[obj]"                                      \
                                  : [value] "+r"(value), [obj] "+m"(obj->value)                     \
@@ -661,7 +661,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
          */
         #define DEFINE_ATOMIC_FETCH_SUB(type)                                                      \
             type SN_GET_ATOMIC_FUNCTION(fetch_sub, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 SN_UNUSED(memory_order);                                                           \
                 /* Calling fetch_add won't work because of type casting */                         \
                 __asm__ volatile("neg %[value]\n\t"                                                \
@@ -689,7 +689,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
          */
         #define DEFINE_ATOMIC_FETCH_OR(type)                                                       \
             type SN_GET_ATOMIC_FUNCTION(fetch_or, type)(                                           \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 PRE_ATOMIC_RMW_FENCE(memory_order);                                                \
                                                                                                    \
                 type old;                                                                          \
@@ -705,7 +705,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
          */
         #define DEFINE_ATOMIC_FETCH_XOR(type)                                                      \
             type SN_GET_ATOMIC_FUNCTION(fetch_xor, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 PRE_ATOMIC_RMW_FENCE(memory_order);                                                \
                                                                                                    \
                 type old;                                                                          \
@@ -720,7 +720,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
          */
         #define DEFINE_ATOMIC_FETCH_AND(type)                                                      \
             type SN_GET_ATOMIC_FUNCTION(fetch_and, type)(                                          \
-                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order) { \
+                volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 PRE_ATOMIC_RMW_FENCE(memory_order);                                                \
                                                                                                    \
                 type old;                                                                          \
@@ -733,7 +733,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
 /**
  * @brief Add a memory fence.
  */
-void sn_memory_fence(snMemoryOrder fence) {
+void sn_memory_fence(SnMemoryOrder fence) {
     switch (fence) {
         case SN_MEMORY_ORDER_NONE:
             // Nothing to do
@@ -754,7 +754,7 @@ void sn_memory_fence(snMemoryOrder fence) {
 /**
  * @brief Atomic flag test and set operation.
  */
-bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order) {
+bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
     // LOCK enforces full memory barrier
     SN_UNUSED(memory_order);
 
@@ -769,7 +769,7 @@ bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, snMemory
 /**
  * @brief Atomic flag clear.
  */
-void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order) {
+void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
     // As standard library allows any memory order, we do as well
     PRE_ATOMIC_RMW_FENCE(memory_order);
 
@@ -785,7 +785,7 @@ void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, snMemoryOrder m
 /**
  * @brief Atomic flag load.
  */
-bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order) {
+bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
     PRE_ATOMIC_LOAD_FENCE(memory_order);
 
     bool ret;

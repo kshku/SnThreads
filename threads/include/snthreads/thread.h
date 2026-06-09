@@ -8,31 +8,31 @@
 #endif
 
 /**
- * @typedef snThread
+ * @typedef SnThread
  * @brief The thread type.
  *
  * Defined according to platform.
  *
  * Ownership & lifetime rules:
- * - snThread is user-owned storage.
- * - The snThread object must remain valid until the thread has exited,
+ * - SnThread is user-owned storage.
+ * - The SnThread object must remain valid until the thread has exited,
  *   regardless of whether it is joined or detached.
  * - Detached threads cannot be joined.
  * - Calling sn_thread_self() is only valid while the thread is attached.
  */
-typedef struct snThread {
+typedef struct SnThread {
     alignas(max_align_t) char buffer[40];
-} snThread;
+} SnThread;
 
 /**
- * typedef snThreadFn
+ * typedef SnThreadFn
  * @brief The type of function called after creating thread.
  *
  * @param data The data passed while creating thread.
  *
  * @return Returns a void *.
  */
-typedef void *(*snThreadFn)(void *data);
+typedef void *(*SnThreadFn)(void *data);
 
 /**
  * @brief Initialize the threading related things.
@@ -62,7 +62,7 @@ SN_API void sn_thread_shutdown(void);
  *
  * @return Returns true on success, else false.
  */
-SN_API bool sn_thread_create(snThread *thread, snThreadFn func, void *data);
+SN_API bool sn_thread_create(SnThread *thread, SnThreadFn func, void *data);
 
 /**
  * @brief Detach the given thread.
@@ -71,7 +71,7 @@ SN_API bool sn_thread_create(snThread *thread, snThreadFn func, void *data);
  *
  * @return Returns true on success, else false.
  */
-SN_API bool sn_thread_detach(snThread *thread);
+SN_API bool sn_thread_detach(SnThread *thread);
 
 /**
  * @brief Join the given thread.
@@ -83,7 +83,7 @@ SN_API bool sn_thread_detach(snThread *thread);
  *
  * @return Returns true on success, else false.
  */
-SN_API bool sn_thread_join(snThread *thread, void **ret);
+SN_API bool sn_thread_join(SnThread *thread, void **ret);
 
 /**
  * @brief Exit from the calling thread.
@@ -99,7 +99,7 @@ SN_API void sn_thread_exit(void *ret);
  *
  * @return Returns the thread id.
  */
-SN_API snThread *sn_thread_self(void);
+SN_API SnThread *sn_thread_self(void);
 
 /**
  * @brief Check whether two thread ids are equal.
@@ -107,15 +107,15 @@ SN_API snThread *sn_thread_self(void);
  * @param t1 Thread id to compare.
  * @param t2 Thread id to compare.
  */
-SN_API bool sn_thread_equal(const snThread *t1, const snThread *t2);
+SN_API bool sn_thread_equal(const SnThread *t1, const SnThread *t2);
 
 /**
  * @brief Attach external thread.
  *
- * @param thread Pointer to snThread.
+ * @param thread Pointer to SnThread.
  *
  * @return Returns true on success, else false.
  */
-SN_API bool sn_thread_attach(snThread *thread);
+SN_API bool sn_thread_attach(SnThread *thread);
 
 #undef SN_API

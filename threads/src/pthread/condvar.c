@@ -5,34 +5,34 @@
     #include <pthread.h>
     #include <time.h>
 
-typedef struct snMutexPthread {
+typedef struct SnMutexPthread {
     pthread_mutex_t mutex;
-} snMutexPthread;
+} SnMutexPthread;
 
-    #define MUTEX(mtx) (((snMutexPthread *)(mtx))->mutex)
+    #define MUTEX(mtx) (((SnMutexPthread *)(mtx))->mutex)
 
-typedef struct snCondvarPthread {
+typedef struct SnCondvarPthread {
     pthread_cond_t cond;
-} snCondvarPthread;
+} SnCondvarPthread;
 
-    #define CONDVAR(condvar) (((snCondvarPthread *)(condvar))->cond)
+    #define CONDVAR(condvar) (((SnCondvarPthread *)(condvar))->cond)
 
-SN_STATIC_ASSERT(sizeof(snCondvarPthread) <= sizeof(snCondvar), "snCondvar size insufficient");
+SN_STATIC_ASSERT(sizeof(SnCondvarPthread) <= sizeof(SnCondvar), "SnCondvar size insufficient");
 
-bool sn_condvar_init(snCondvar *cv) {
+bool sn_condvar_init(SnCondvar *cv) {
     return pthread_cond_init(&CONDVAR(cv), NULL) == 0;
 }
 
-void sn_condvar_deinit(snCondvar *cv) {
+void sn_condvar_deinit(SnCondvar *cv) {
     pthread_cond_destroy(&CONDVAR(cv));
 }
 
-void sn_condvar_wait(snCondvar *cv, snMutex *mutex) {
+void sn_condvar_wait(SnCondvar *cv, SnMutex *mutex) {
     int r = pthread_cond_wait(&CONDVAR(cv), &MUTEX(mutex));
     SN_ASSERT(r == 0);
 }
 
-bool sn_condvar_timed_wait(snCondvar *cv, snMutex *mutex, uint64_t timeout_ns) {
+bool sn_condvar_timed_wait(SnCondvar *cv, SnMutex *mutex, uint64_t timeout_ns) {
     struct timespec ts;
     ts.tv_sec = timeout_ns / 1000000000ull;
     ts.tv_nsec = timeout_ns % 1000000000ull;
@@ -40,11 +40,11 @@ bool sn_condvar_timed_wait(snCondvar *cv, snMutex *mutex, uint64_t timeout_ns) {
     return pthread_cond_timedwait(&CONDVAR(cv), &MUTEX(mutex), &ts) == 0;
 }
 
-void sn_condvar_signal(snCondvar *cv) {
+void sn_condvar_signal(SnCondvar *cv) {
     pthread_cond_signal(&CONDVAR(cv));
 }
 
-void sn_condvar_broadcast(snCondvar *cv) {
+void sn_condvar_broadcast(SnCondvar *cv) {
     pthread_cond_broadcast(&CONDVAR(cv));
 }
 

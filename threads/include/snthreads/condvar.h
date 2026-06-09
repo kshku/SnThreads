@@ -11,11 +11,11 @@
 #endif
 
 /**
- * @typedef snCondvar
+ * @typedef SnCondvar
  * @brief Condition variable type.
  *
  * Ownership & lifetime rules:
- * - snCondvar is user-owned storage.
+ * - SnCondvar is user-owned storage.
  * - Must be initialized before use.
  * - Must outlive all waiting threads.
  *
@@ -25,9 +25,9 @@
  * - Mutex is re-acquired before returning.
  * - Spurious wakeups are allowed.
  */
-typedef struct snCondvar {
+typedef struct SnCondvar {
     alignas(max_align_t) char buffer[64];
-} snCondvar;
+} SnCondvar;
 
 /**
  * @brief Initialize a condition variable.
@@ -36,7 +36,7 @@ typedef struct snCondvar {
  *
  * @return Returns true on success.
  */
-SN_API bool sn_condvar_init(snCondvar *cv);
+SN_API bool sn_condvar_init(SnCondvar *cv);
 
 /**
  * @brief Deinitialize a condition variable.
@@ -45,7 +45,7 @@ SN_API bool sn_condvar_init(snCondvar *cv);
  *
  * No threads may be waiting.
  */
-SN_API void sn_condvar_deinit(snCondvar *cv);
+SN_API void sn_condvar_deinit(SnCondvar *cv);
 
 /**
  * @brief Wait on condition variable.
@@ -56,7 +56,7 @@ SN_API void sn_condvar_deinit(snCondvar *cv);
  * Mutex must be locked before calling.
  * Returns with mutex locked.
  */
-SN_API void sn_condvar_wait(snCondvar *cv, snMutex *mutex);
+SN_API void sn_condvar_wait(SnCondvar *cv, SnMutex *mutex);
 
 /**
  * @brief Timed wait on condition variable.
@@ -67,18 +67,18 @@ SN_API void sn_condvar_wait(snCondvar *cv, snMutex *mutex);
  *
  * @return true if signaled, false if timed out.
  */
-SN_API bool sn_condvar_timed_wait(snCondvar *cv, snMutex *mutex, uint64_t timeout_ns);
+SN_API bool sn_condvar_timed_wait(SnCondvar *cv, SnMutex *mutex, uint64_t timeout_ns);
 
 /**
  * @brief Wake one waiting thread.
  *
  * @param cv Pointer to condvar.
  */
-SN_API void sn_condvar_signal(snCondvar *cv);
+SN_API void sn_condvar_signal(SnCondvar *cv);
 
 /**
  * @brief Wake all waiting threads.
  *
  * @param cv Pointer to condvar.
  */
-SN_API void sn_condvar_broadcast(snCondvar *cv);
+SN_API void sn_condvar_broadcast(SnCondvar *cv);

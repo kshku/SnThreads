@@ -4,45 +4,45 @@
 
     #include <windows.h>
 
-typedef struct snRWLockWin32 {
+typedef struct SnRWLockWin32 {
     SRWLOCK rwlock;
-} snRWLockWin32;
+} SnRWLockWin32;
 
-    #define RWLOCK(lock) (((snRWLockWin32 *)(lock))->rwlock)
+    #define RWLOCK(lock) (((SnRWLockWin32 *)(lock))->rwlock)
 
-SN_STATIC_ASSERT(sizeof(snRWLockWin32) <= sizeof(snRWLock), "snRWLock size is not large enough!");
+SN_STATIC_ASSERT(sizeof(SnRWLockWin32) <= sizeof(SnRWLock), "SnRWLock size is not large enough!");
 
-bool sn_rwlock_init(snRWLock *rw) {
+bool sn_rwlock_init(SnRWLock *rw) {
     InitializeSRWLock(&RWLOCK(rw));
     return true;
 }
 
-void sn_rwlock_deinit(snRWLock *rw) {
+void sn_rwlock_deinit(SnRWLock *rw) {
     SN_UNUSED(rw);
     // Nothing to do
 }
 
-void sn_rwlock_read_lock(snRWLock *rw) {
+void sn_rwlock_read_lock(SnRWLock *rw) {
     AcquireSRWLockShared(&RWLOCK(rw));
 }
 
-bool sn_rwlock_try_read_lock(snRWLock *rw) {
+bool sn_rwlock_try_read_lock(SnRWLock *rw) {
     return TryAcquireSRWLockShared(&RWLOCK(rw));
 }
 
-void sn_rwlock_read_unlock(snRWLock *rw) {
+void sn_rwlock_read_unlock(SnRWLock *rw) {
     ReleaseSRWLockShared(&RWLOCK(rw));
 }
 
-void sn_rwlock_write_lock(snRWLock *rw) {
+void sn_rwlock_write_lock(SnRWLock *rw) {
     AcquireSRWLockExclusive(&RWLOCK(rw));
 }
 
-bool sn_rwlock_try_write_lock(snRWLock *rw) {
+bool sn_rwlock_try_write_lock(SnRWLock *rw) {
     return TryAcquireSRWLockExclusive(&RWLOCK(rw));
 }
 
-void sn_rwlock_write_unlock(snRWLock *rw) {
+void sn_rwlock_write_unlock(SnRWLock *rw) {
     ReleaseSRWLockExclusive(&RWLOCK(rw));
 }
 

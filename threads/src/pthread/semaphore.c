@@ -5,17 +5,17 @@
     #include "snthreads/condvar.h"
     #include "snthreads/mutex.h"
 
-typedef struct snSemaphorePthread {
-    snMutex mutex;
-    snCondvar cv;
+typedef struct SnSemaphorePthread {
+    SnMutex mutex;
+    SnCondvar cv;
     uint32_t count;
-} snSemaphorePthread;
+} SnSemaphorePthread;
 
-SN_STATIC_ASSERT(sizeof(snSemaphorePthread) <= sizeof(snSemaphore), "snSemaphore size "
+SN_STATIC_ASSERT(sizeof(SnSemaphorePthread) <= sizeof(SnSemaphore), "SnSemaphore size "
                                                                     "insufficient");
 
-bool sn_semaphore_init(snSemaphore *sem, uint32_t initial_count) {
-    snSemaphorePthread *s = (snSemaphorePthread *)sem;
+bool sn_semaphore_init(SnSemaphore *sem, uint32_t initial_count) {
+    SnSemaphorePthread *s = (SnSemaphorePthread *)sem;
 
     sn_mutex_init(&s->mutex);
 
@@ -28,15 +28,15 @@ bool sn_semaphore_init(snSemaphore *sem, uint32_t initial_count) {
     return true;
 }
 
-void sn_semaphore_deinit(snSemaphore *sem) {
-    snSemaphorePthread *s = (snSemaphorePthread *)sem;
+void sn_semaphore_deinit(SnSemaphore *sem) {
+    SnSemaphorePthread *s = (SnSemaphorePthread *)sem;
 
     sn_condvar_deinit(&s->cv);
     sn_mutex_deinit(&s->mutex);
 }
 
-void sn_semaphore_wait(snSemaphore *sem) {
-    snSemaphorePthread *s = (snSemaphorePthread *)sem;
+void sn_semaphore_wait(SnSemaphore *sem) {
+    SnSemaphorePthread *s = (SnSemaphorePthread *)sem;
 
     sn_mutex_lock(&s->mutex);
 
@@ -49,8 +49,8 @@ void sn_semaphore_wait(snSemaphore *sem) {
     sn_mutex_unlock(&s->mutex);
 }
 
-bool sn_semaphore_try_wait(snSemaphore *sem) {
-    snSemaphorePthread *s = (snSemaphorePthread *)sem;
+bool sn_semaphore_try_wait(SnSemaphore *sem) {
+    SnSemaphorePthread *s = (SnSemaphorePthread *)sem;
 
     bool acquired = false;
 
@@ -65,8 +65,8 @@ bool sn_semaphore_try_wait(snSemaphore *sem) {
     return acquired;
 }
 
-void sn_semaphore_post(snSemaphore *sem) {
-    snSemaphorePthread *s = (snSemaphorePthread *)sem;
+void sn_semaphore_post(SnSemaphore *sem) {
+    SnSemaphorePthread *s = (SnSemaphorePthread *)sem;
 
     sn_mutex_lock(&s->mutex);
 

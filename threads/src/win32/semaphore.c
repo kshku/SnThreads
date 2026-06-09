@@ -4,24 +4,24 @@
 
     #include <windows.h>
 
-typedef struct snSemaphoreWin32 {
+typedef struct SnSemaphoreWin32 {
     HANDLE handle;
-} snSemaphoreWin32;
+} SnSemaphoreWin32;
 
-    #define HDL(semaphore) (((snSemaphoreWin32 *)(semaphore))->handle)
+    #define HDL(semaphore) (((SnSemaphoreWin32 *)(semaphore))->handle)
 
-SN_STATIC_ASSERT(sizeof(snSemaphoreWin32) <= sizeof(snSemaphore), "snSemaphore size insufficient");
+SN_STATIC_ASSERT(sizeof(SnSemaphoreWin32) <= sizeof(SnSemaphore), "SnSemaphore size insufficient");
 
-bool sn_semaphore_init(snSemaphore *sem, uint32_t initial_count) {
-    snSemaphoreWin32 *s = (snSemaphoreWin32 *)sem;
+bool sn_semaphore_init(SnSemaphore *sem, uint32_t initial_count) {
+    SnSemaphoreWin32 *s = (SnSemaphoreWin32 *)sem;
 
     HDL(sem) = CreateSemaphoreW(NULL, (LONG)initial_count, LONG_MAX, NULL);
 
     return HDL(sem) != NULL;
 }
 
-void sn_semaphore_deinit(snSemaphore *sem) {
-    snSemaphoreWin32 *s = (snSemaphoreWin32 *)sem;
+void sn_semaphore_deinit(SnSemaphore *sem) {
+    SnSemaphoreWin32 *s = (SnSemaphoreWin32 *)sem;
 
     if (HDL(sem)) {
         CloseHandle(HDL(sem));
@@ -29,21 +29,21 @@ void sn_semaphore_deinit(snSemaphore *sem) {
     }
 }
 
-void sn_semaphore_wait(snSemaphore *sem) {
-    snSemaphoreWin32 *s = (snSemaphoreWin32 *)sem;
+void sn_semaphore_wait(SnSemaphore *sem) {
+    SnSemaphoreWin32 *s = (SnSemaphoreWin32 *)sem;
 
     DWORD r = WaitForSingleObject(HDL(sem), INFINITE);
     SN_ASSERT(r == WAIT_OBJECT_0);
 }
 
-bool sn_semaphore_try_wait(snSemaphore *sem) {
-    snSemaphoreWin32 *s = (snSemaphoreWin32 *)sem;
+bool sn_semaphore_try_wait(SnSemaphore *sem) {
+    SnSemaphoreWin32 *s = (SnSemaphoreWin32 *)sem;
 
     return WaitForSingleObject(HDL(sem), 0) == WAIT_OBJECT_0;
 }
 
-void sn_semaphore_post(snSemaphore *sem) {
-    snSemaphoreWin32 *s = (snSemaphoreWin32 *)sem;
+void sn_semaphore_post(SnSemaphore *sem) {
+    SnSemaphoreWin32 *s = (SnSemaphoreWin32 *)sem;
 
     BOOL ok = ReleaseSemaphore(HDL(sem), 1, NULL);
     SN_ASSERT(ok);

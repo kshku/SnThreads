@@ -4,13 +4,13 @@
 #include "snthreads/defines.h"
 
 /**
- * @enum snMemoryOrder
+ * @enum SnMemoryOrder
  * @brief Memory order constants.
  *
  * @note The default memory order used by all the sn_atomic_* functions is
  * SN_MEMORY_ORDER_NONE.
  */
-typedef enum snMemoryOrder {
+typedef enum SnMemoryOrder {
     SN_MEMORY_ORDER_NONE, /**< No memory order */
     SN_MEMORY_ORDER_RELAXED = SN_MEMORY_ORDER_NONE, /**< Alias for SN_MEMORY_ORDER_NONE */
     SN_MEMORY_ORDER_ACQUIRE, /**< Acquire operation */
@@ -19,14 +19,14 @@ typedef enum snMemoryOrder {
     SN_MEMORY_ORDER_TOTAL_ORDER, /**< Total ordering */
     SN_MEMORY_ORDER_SEQ_CST = SN_MEMORY_ORDER_TOTAL_ORDER /**< Alias for SN_MEMORY_ORDER_TOTAL_ORDER
                                                            */
-} snMemoryOrder;
+} SnMemoryOrder;
 
 /**
  * @brief Add a memory fence(barrier).
  *
  * @param fence The type of the memory fence
  */
-SN_API void sn_memory_fence(snMemoryOrder fence);
+SN_API void sn_memory_fence(SnMemoryOrder fence);
 
 /**
  * @brief Prefix used by the engine for atomic types.
@@ -67,7 +67,7 @@ typedef struct sn_atomic_flag {
  *
  * @return Value of the flag before setting it.
  */
-SN_API bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order);
+SN_API bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order);
 
 /**
  * @brief Clear(unset) the atomic flag with given memory order.
@@ -75,7 +75,7 @@ SN_API bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, s
  * @param obj The atomic flag to be cleared
  * @param memory_order The memory order to use
  */
-SN_API void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order);
+SN_API void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order);
 
 /**
  * @brief Load the value in the atomic flag with given memory order.
@@ -88,7 +88,7 @@ SN_API void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, snMemory
  *
  * @return Returns true if flag is set, else false.
  */
-SN_API bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, snMemoryOrder memory_order);
+SN_API bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order);
 
 /**
  * @brief TAS with default memory order.
@@ -131,63 +131,63 @@ SN_API bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, snMemoryO
  */
 #define DECLARE_ATOMIC_LOAD(type)                                                  \
     SN_API type SN_GET_ATOMIC_FUNCTION(load, type)(                                \
-        const volatile SN_GET_ATOMIC_TYPE(type) * obj, snMemoryOrder memory_order)
+        const volatile SN_GET_ATOMIC_TYPE(type) * obj, SnMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic store function for given type.
  */
 #define DECLARE_ATOMIC_STORE(type)                                                       \
     SN_API void SN_GET_ATOMIC_FUNCTION(store, type)(                                     \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic exchange function for given type.
  */
 #define DECLARE_ATOMIC_EXCHANGE(type)                                                    \
     SN_API type SN_GET_ATOMIC_FUNCTION(exchange, type)(                                  \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic compare exchange function for given type.
  */
 #define DECLARE_ATOMIC_COMPARE_EXCHANGE(type)                   \
     SN_API bool SN_GET_ATOMIC_FUNCTION(compare_exchange, type)( \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type * expect, type value, snMemoryOrder success, snMemoryOrder fail)
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type * expect, type value, SnMemoryOrder success, SnMemoryOrder fail)
 
 /**
  * @brief Declare atomic fetch_add function for given type.
  */
 #define DECLARE_ATOMIC_FETCH_ADD(type)                                                   \
     SN_API type SN_GET_ATOMIC_FUNCTION(fetch_add, type)(                                 \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic fetch_sub function for given type.
  */
 #define DECLARE_ATOMIC_FETCH_SUB(type)                                                   \
     SN_API type SN_GET_ATOMIC_FUNCTION(fetch_sub, type)(                                 \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic fetch_or function for given type.
  */
 #define DECLARE_ATOMIC_FETCH_OR(type)                                                    \
     SN_API type SN_GET_ATOMIC_FUNCTION(fetch_or, type)(                                  \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic fetch_xor function for given type.
  */
 #define DECLARE_ATOMIC_FETCH_XOR(type)                                                   \
     SN_API type SN_GET_ATOMIC_FUNCTION(fetch_xor, type)(                                 \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order)
 
 /**
  * @brief Declare atomic fetch_and function for given type.
  */
 #define DECLARE_ATOMIC_FETCH_AND(type)                                                   \
     SN_API type SN_GET_ATOMIC_FUNCTION(fetch_and, type)(                                 \
-        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, snMemoryOrder memory_order)
+        volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order)
 
 /**
  * @brief Declare all the atomic functions for given type.

@@ -17,13 +17,13 @@
 #define TEST_PASS(name) printf("[PASS] %s\n", name)
 
 static void *thread_self_test(void *arg) {
-    snThread *self = sn_thread_self();
+    SnThread *self = sn_thread_self();
     TEST_ASSERT(self != NULL);
     return arg;
 }
 
 void test_thread_self_basic(void) {
-    snThread t;
+    SnThread t;
 
     TEST_ASSERT(sn_thread_create(&t, thread_self_test, (void *)0x1234));
 
@@ -37,7 +37,7 @@ void test_thread_self_basic(void) {
 #define INC_THREADS 8
 #define INC_ITERS 500000
 
-static snMutex g_mutex;
+static SnMutex g_mutex;
 static int g_counter;
 
 static void *mutex_worker(void *arg) {
@@ -51,7 +51,7 @@ static void *mutex_worker(void *arg) {
 }
 
 void test_mutex_contention(void) {
-    snThread threads[INC_THREADS];
+    SnThread threads[INC_THREADS];
 
     sn_mutex_init(&g_mutex);
     g_counter = 0;
@@ -72,7 +72,7 @@ void test_mutex_contention(void) {
 #define RW_WRITERS 2
 #define RW_ITERS 100000
 
-static snRWLock g_rwlock;
+static SnRWLock g_rwlock;
 static int g_rw_value;
 
 static void *reader(void *arg) {
@@ -97,7 +97,7 @@ static void *writer(void *arg) {
 }
 
 void test_rwlock(void) {
-    snThread threads[RW_READERS + RW_WRITERS];
+    SnThread threads[RW_READERS + RW_WRITERS];
 
     TEST_ASSERT(sn_rwlock_init(&g_rwlock));
     g_rw_value = 0;
@@ -117,8 +117,8 @@ void test_rwlock(void) {
     TEST_PASS("rwlock");
 }
 
-static snMutex cv_mutex;
-static snCondvar cv;
+static SnMutex cv_mutex;
+static SnCondvar cv;
 static int cv_ready;
 
 static void *cv_waiter(void *arg) {
@@ -132,7 +132,7 @@ static void *cv_waiter(void *arg) {
 }
 
 void test_condvar_wakeup(void) {
-    snThread t;
+    SnThread t;
 
     sn_mutex_init(&cv_mutex);
     TEST_ASSERT(sn_condvar_init(&cv));
@@ -157,8 +157,8 @@ void test_condvar_wakeup(void) {
 #define SEM_CONSUMERS 4
 #define SEM_ITEMS 200000
 
-static snSemaphore sem;
-static snMutex sem_mutex;
+static SnSemaphore sem;
+static SnMutex sem_mutex;
 static int produced;
 static int consumed;
 
@@ -187,7 +187,7 @@ static void *consumer(void *arg) {
 }
 
 void test_semaphore_pc(void) {
-    snThread threads[SEM_PRODUCERS + SEM_CONSUMERS];
+    SnThread threads[SEM_PRODUCERS + SEM_CONSUMERS];
 
     TEST_ASSERT(sn_semaphore_init(&sem, 0));
     sn_mutex_init(&sem_mutex);
