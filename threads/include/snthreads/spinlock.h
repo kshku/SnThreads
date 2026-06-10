@@ -2,10 +2,10 @@
 
 #include "snthreads/api.h"
 #include "snthreads/atomics.h"
-#include "snthreads/defines.h"
+#include <sncore/defines.h>
 
 #if defined(SN_COMPILER_MSVC)
-SN_API void sn_pause_instruction(void);
+SN_THREADS_API void sn_pause_instruction(void);
     #define SN_PAUSE_INSTRUCTION sn_pause_instruction()
 #else
     #define SN_PAUSE_INSTRUCTION __asm__ volatile("pause")
@@ -48,4 +48,3 @@ typedef sn_atomic_flag sn_spinlock;
  */
 #define sn_spinlock_locked(lock) sn_atomic_flag_load_explicit(lock, SN_MEMORY_ORDER_ACQUIRE)
 
-#undef SN_API
