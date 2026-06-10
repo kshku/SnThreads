@@ -21,7 +21,7 @@
  * - Calling sn_thread_self() is only valid while the thread is attached.
  */
 typedef struct SnThread {
-    alignas(max_align_t) char buffer[40];
+    alignas(16) char buffer[40];
 } SnThread;
 
 /**
