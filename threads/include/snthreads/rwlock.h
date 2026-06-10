@@ -18,21 +18,21 @@ typedef struct SnRWLock {
  *
  * @return Returns true on success, else false.
  */
-SN_API bool sn_rwlock_init(SnRWLock *rw);
+SN_THREADS_API bool sn_rwlock_init(SnRWLock *rw);
 
 /**
  * @brief Deinitialize read write lock.
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_deinit(SnRWLock *rw);
+SN_THREADS_API void sn_rwlock_deinit(SnRWLock *rw);
 
 /**
  * Acquire read lock.
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_read_lock(SnRWLock *rw);
+SN_THREADS_API void sn_rwlock_read_lock(SnRWLock *rw);
 
 /**
  * @brief Try to acquire read lock.
@@ -41,21 +41,21 @@ SN_API void sn_rwlock_read_lock(SnRWLock *rw);
  *
  * @return Returns true if lock is acquired.
  */
-SN_API bool sn_rwlock_try_read_lock(SnRWLock *rw);
+SN_THREADS_API bool sn_rwlock_try_read_lock(SnRWLock *rw);
 
 /**
  * @brief Release read lock.
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_read_unlock(SnRWLock *rw);
+SN_THREADS_API void sn_rwlock_read_unlock(SnRWLock *rw);
 
 /**
  * Acquire write lock.
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_write_lock(SnRWLock *rw);
+SN_THREADS_API void sn_rwlock_write_lock(SnRWLock *rw);
 
 /**
  * @brief Try to acquire write lock.
@@ -64,13 +64,12 @@ SN_API void sn_rwlock_write_lock(SnRWLock *rw);
  *
  * @return Returns true if lock is acquired.
  */
-SN_API bool sn_rwlock_try_write_lock(SnRWLock *rw);
+SN_THREADS_API bool sn_rwlock_try_write_lock(SnRWLock *rw);
 
 /**
  * @brief Release write lock.
  *
  * @param rw Pointer to rwlock.
  */
-SN_API void sn_rwlock_write_unlock(SnRWLock *rw);
+SN_THREADS_API void sn_rwlock_write_unlock(SnRWLock *rw);
 
-#undef SN_API

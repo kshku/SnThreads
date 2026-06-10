@@ -36,7 +36,7 @@ typedef struct SnCondvar {
  *
  * @return Returns true on success.
  */
-SN_API bool sn_condvar_init(SnCondvar *cv);
+SN_THREADS_API bool sn_condvar_init(SnCondvar *cv);
 
 /**
  * @brief Deinitialize a condition variable.
@@ -45,7 +45,7 @@ SN_API bool sn_condvar_init(SnCondvar *cv);
  *
  * No threads may be waiting.
  */
-SN_API void sn_condvar_deinit(SnCondvar *cv);
+SN_THREADS_API void sn_condvar_deinit(SnCondvar *cv);
 
 /**
  * @brief Wait on condition variable.
@@ -56,7 +56,7 @@ SN_API void sn_condvar_deinit(SnCondvar *cv);
  * Mutex must be locked before calling.
  * Returns with mutex locked.
  */
-SN_API void sn_condvar_wait(SnCondvar *cv, SnMutex *mutex);
+SN_THREADS_API void sn_condvar_wait(SnCondvar *cv, SnMutex *mutex);
 
 /**
  * @brief Timed wait on condition variable.
@@ -67,18 +67,18 @@ SN_API void sn_condvar_wait(SnCondvar *cv, SnMutex *mutex);
  *
  * @return true if signaled, false if timed out.
  */
-SN_API bool sn_condvar_timed_wait(SnCondvar *cv, SnMutex *mutex, uint64_t timeout_ns);
+SN_THREADS_API bool sn_condvar_timed_wait(SnCondvar *cv, SnMutex *mutex, uint64_t timeout_ns);
 
 /**
  * @brief Wake one waiting thread.
  *
  * @param cv Pointer to condvar.
  */
-SN_API void sn_condvar_signal(SnCondvar *cv);
+SN_THREADS_API void sn_condvar_signal(SnCondvar *cv);
 
 /**
  * @brief Wake all waiting threads.
  *
  * @param cv Pointer to condvar.
  */
-SN_API void sn_condvar_broadcast(SnCondvar *cv);
+SN_THREADS_API void sn_condvar_broadcast(SnCondvar *cv);
