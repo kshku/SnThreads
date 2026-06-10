@@ -8,7 +8,7 @@
  * @brief SnRWLock (read write lock) type.
  */
 typedef struct SnRWLock {
-    alignas(max_align_t) char buffer[80];
+    alignas(16) char buffer[80];
 } SnRWLock;
 
 /**

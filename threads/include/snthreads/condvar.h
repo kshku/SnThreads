@@ -26,7 +26,7 @@
  * - Spurious wakeups are allowed.
  */
 typedef struct SnCondvar {
-    alignas(max_align_t) char buffer[64];
+    alignas(16) char buffer[64];
 } SnCondvar;
 
 /**

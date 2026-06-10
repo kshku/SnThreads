@@ -10,7 +10,7 @@
  * @note Not recursive!
  */
 typedef struct SnMutex {
-    alignas(max_align_t) char buffer[64];
+    alignas(16) char buffer[64];
 } SnMutex;
 
 /**
