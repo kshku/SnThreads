@@ -18,7 +18,7 @@
  * - post(): increments count and wakes waiter
  */
 typedef struct SnSemaphore {
-    alignas(max_align_t) char buffer[256];
+    alignas(16) char buffer[256];
 } SnSemaphore;
 
 /**
