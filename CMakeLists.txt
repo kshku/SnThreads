@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 3.15...3.31)
 
 project(SnThreads VERSION 0.0.0 DESCRIPTION "Thread and synchronization abstraction library" LANGUAGES C)
 
+include(FetchContent)
+FetchContent_Declare(sncore
+    GIT_REPOSITORY https://github.com/kshku/SnCore.git
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(sncore)
+
 if(MSVC)
     enable_language(ASM_MASM)
 endif()

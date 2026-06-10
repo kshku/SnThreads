@@ -1,7 +1,7 @@
 #pragma once
 
 #include "snthreads/api.h"
-#include "snthreads/defines.h"
+#include <sncore/defines.h>
 
 /**
  * @struct SnMutex

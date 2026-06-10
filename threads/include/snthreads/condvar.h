@@ -1,6 +1,6 @@
 #pragma once
 
-#include "snthreads/defines.h"
+#include <sncore/defines.h>
 #include "snthreads/mutex.h"
 
 // Should be included after mutex.h

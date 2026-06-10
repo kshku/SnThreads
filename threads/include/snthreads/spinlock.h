@@ -2,7 +2,7 @@
 
 #include "snthreads/api.h"
 #include "snthreads/atomics.h"
-#include "snthreads/defines.h"
+#include <sncore/defines.h>
 
 #if defined(SN_COMPILER_MSVC)
 SN_API void sn_pause_instruction(void);
