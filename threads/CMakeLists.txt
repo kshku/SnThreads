@@ -12,4 +12,11 @@ target_include_directories(snthreads PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(snthreads PRIVATE sn_threads_configs)
 target_link_libraries(snthreads PUBLIC sncore)
 
+if(MSVC)
+    add_custom_command(TARGET snthreads PRE_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "$(IntDir)src/arch/amd64"
+        COMMENT "Creating MASM output directory"
+    )
+endif()
+
 add_subdirectory(src)

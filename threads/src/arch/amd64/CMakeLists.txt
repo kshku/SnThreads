@@ -10,11 +10,6 @@ if(MSVC)
     list(APPEND SRCS ${ASM_SRCS})
 
     target_link_options(snthreads PRIVATE "/DEF:${CMAKE_CURRENT_SOURCE_DIR}/atomics.def")
-
-    add_custom_command(TARGET snthreads PRE_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E make_directory "$(IntDir)src/arch/amd64"
-        COMMENT "Creating MASM output directory"
-    )
 endif()
 
 set(USE_ABS_SRCS)
