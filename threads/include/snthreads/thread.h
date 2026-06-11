@@ -1,6 +1,7 @@
 #pragma once
 
 #include "snthreads/api.h"
+
 #include <sncore/defines.h>
 
 #if !defined(SN_DISABLE_FAST_TLS)
