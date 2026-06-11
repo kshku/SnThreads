@@ -123,7 +123,7 @@ int main(void) {
 include(FetchContent)
 FetchContent_Declare(snthreads
     GIT_REPOSITORY https://github.com/kshku/SnThreads.git
-    GIT_TAG main
+    GIT_TAG <tag>  # e.g., v0.1.0
 )
 FetchContent_MakeAvailable(snthreads)
 
