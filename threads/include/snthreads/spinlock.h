@@ -2,6 +2,7 @@
 
 #include "snthreads/api.h"
 #include "snthreads/atomics.h"
+
 #include <sncore/defines.h>
 
 #if defined(SN_COMPILER_MSVC)

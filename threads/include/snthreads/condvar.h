@@ -1,7 +1,8 @@
 #pragma once
 
-#include <sncore/defines.h>
 #include "snthreads/mutex.h"
+
+#include <sncore/defines.h>
 
 // Should be included after mutex.h
 #include "snthreads/api.h"
