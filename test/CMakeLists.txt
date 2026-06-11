@@ -1,3 +1,5 @@
+enable_testing()
+
 set(SRCS
     test.c
 )
@@ -5,6 +7,8 @@ set(SRCS
 add_executable(sn_threads_test)
 target_sources(sn_threads_test PRIVATE ${SRCS})
 target_link_libraries(sn_threads_test PRIVATE snthreads)
+
+add_test(NAME sn_threads_test COMMAND sn_threads_test)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" AND SN_THREADS_BUILD_SHARED)
     add_custom_target(copy_dlls ALL
