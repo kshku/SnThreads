@@ -10,7 +10,11 @@ FetchContent_Declare(sncore
 FetchContent_MakeAvailable(sncore)
 
 if(MSVC)
-    enable_language(ASM_MASM)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "ARM64|aarch64|AARCH64")
+        enable_language(ASM_MARMASM)
+    else()
+        enable_language(ASM_MASM)
+    endif()
 endif()
 
 set(CMAKE_C_EXTENSIONS OFF)

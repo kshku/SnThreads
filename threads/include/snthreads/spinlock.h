@@ -8,6 +8,8 @@
 #if defined(SN_COMPILER_MSVC)
 SN_THREADS_API void sn_pause_instruction(void);
     #define SN_PAUSE_INSTRUCTION sn_pause_instruction()
+#elif defined(SN_ARCH_AARCH64)
+    #define SN_PAUSE_INSTRUCTION __asm__ volatile("yield")
 #else
     #define SN_PAUSE_INSTRUCTION __asm__ volatile("pause")
 #endif
