@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15...4.3)
+cmake_minimum_required(VERSION 3.15...3.31)
 
 project(SnThreads VERSION 0.0.0 DESCRIPTION "Thread and synchronization abstraction library" LANGUAGES C)
 
