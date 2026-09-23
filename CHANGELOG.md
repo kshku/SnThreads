@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.1] - 2026-09-24
+
+### Fixed
+- Use the correct `SN_ARCH_ARM64` macro in ARM64 atomics and spinlock (was `SN_ARCH_AARCH64`)
+
 ## [0.2.0] - 2026-06-29
 
 ### Changed
