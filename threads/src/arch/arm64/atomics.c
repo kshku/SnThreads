@@ -1,6 +1,6 @@
 #include "snthreads/atomics.h"
 
-#ifdef SN_ARCH_AARCH64
+#ifdef SN_ARCH_ARM64
 
     #if defined(SN_COMPILER_MSVC)
 
@@ -230,4 +230,4 @@ bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder me
 
     #endif  // !SN_COMPILER_MSVC
 
-#endif  // SN_ARCH_AARCH64
+#endif  // SN_ARCH_ARM64
