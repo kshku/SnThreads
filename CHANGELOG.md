@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.2.2] - 2026-09-28
+
+### Fixed
+- Fix sn_atomic_compare_exchange_explicit, which called a function named
+  get_generic_atomic_function. Nothing declares it, so any use of the macro
+  failed to compile. Every other generic macro goes through
+  SN_GET_GENERIC_ATOMIC_FUNCTION
+- Fix sn_atomic_fetch_or, sn_atomic_fetch_xor and sn_atomic_fetch_and returning
+  the value they had just stored instead of the one that was there. The compare
+  exchange loop they are built on tested the wrong condition, so it kept going
+  after a successful swap and the retry overwrote the result with the new
+  value. The stored value was always correct
+- Fix the store in the AMD64 atomics using the %z1 operand modifier, which is a
+  GNU as extension that clang rejects outright. Anything built for x86-64 with
+  clang, which is every Intel Mac, could not compile this library at all. CI
+  did not catch it because macos-latest is ARM64 and never took this path
+- Make sn_atomic_flag_clear_explicit a read modify write, an exchange on AMD64
+  and a store release on ARM64, instead of a plain store that could be
+  reordered against a concurrent test and set
+- Honour the memory order sn_atomic_flag_test_and_set_explicit is given,
+  instead of discarding it. Both implementations already emitted a full
+  barrier, so this only makes the contract true
+- Mark the flag load asm volatile and give it a memory clobber. The volatile
+  flag member already kept the load in place, so this is hardening rather than
+  a fix
+
+### Added
+- Cover every generic atomic macro with a test, plus the atomic flag, its
+  single winner guarantee and the write back on a failed compare exchange
+
 ## [0.2.1] - 2026-09-24
 
 ### Fixed

@@ -437,7 +437,7 @@ DEFINE_ATOMIC_UFL_FUNCTIONS(uint_least64_t);
             type new_val;                                                             \
             old_var = SN_GET_ATOMIC_FUNCTION(load, type)(obj, SN_MEMORY_ORDER_NONE);  \
             do new_val = old_var op value;                                            \
-            while (SN_GET_ATOMIC_FUNCTION(compare_exchange, type)(                    \
+            while (!SN_GET_ATOMIC_FUNCTION(compare_exchange, type)(                   \
                 obj, &old_var, new_val, SN_MEMORY_ORDER_NONE, SN_MEMORY_ORDER_NONE)); \
         } while (0)
 

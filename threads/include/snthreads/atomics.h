@@ -312,8 +312,8 @@ CREATE_ATOMIC_TYPE(uint_least64_t);
 /**
  * @brief Atomic comapre exchange operation.
  */
-#define sn_atomic_compare_exchange_explicit(obj, expect, value, success, fail)            \
-    get_generic_atomic_function(obj, compare_exchange)(obj, expect, value, success, fail)
+#define sn_atomic_compare_exchange_explicit(obj, expect, value, success, fail)               \
+    SN_GET_GENERIC_ATOMIC_FUNCTION(obj, compare_exchange)(obj, expect, value, success, fail)
 
 /**
  * @brief Atomic fetch_add operation.

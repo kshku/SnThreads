@@ -64,7 +64,7 @@
             void SN_GET_ATOMIC_FUNCTION(store, type)(                                              \
                 volatile SN_GET_ATOMIC_TYPE(type) * obj, type value, SnMemoryOrder memory_order) { \
                 PRE_ATOMIC_STORE_FENCE(memory_order);                                              \
-                __asm__ volatile("mov%z1 %[value], %[obj]"                                         \
+                __asm__ volatile("mov %[value], %[obj]"                                            \
                                  : [obj] "=m"(obj->value)                                          \
                                  : [value] "ir"(value)                                             \
                                  : "memory");                                                      \
@@ -143,21 +143,25 @@ void sn_memory_fence(SnMemoryOrder fence) {
 }
 
 bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
-    SN_UNUSED(memory_order);
+    PRE_ATOMIC_RMW_FENCE(memory_order);
     bool ret = true;
     __asm__ volatile("lock xchg %[flag], %[value]"
                      : [flag] "+m"(obj->flag), [value] "+r"(ret)
                      :
                      : "memory");
+    POST_ATOMIC_RMW_FENCE(memory_order);
     return ret;
 }
 
 void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
     PRE_ATOMIC_RMW_FENCE(memory_order);
     bool reset = false;
-    __asm__ volatile("movb %[value], %[flag]"
-                     : [flag] "=m"(obj->flag)
-                     : [value] "ir"(reset)
+    /* An xchg, not a plain store, so clearing is a read modify write like
+       every other RMW here and cannot be reordered against a concurrent
+       test and set. */
+    __asm__ volatile("xchg %[value], %[flag]"
+                     : [flag] "+m"(obj->flag), [value] "+r"(reset)
+                     :
                      : "memory");
     POST_ATOMIC_RMW_FENCE(memory_order);
 }
@@ -165,7 +169,12 @@ void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder m
 bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
     PRE_ATOMIC_LOAD_FENCE(memory_order);
     bool ret;
-    __asm__ volatile("mov %[flag], %[value]\n\t" : [value] "=r"(ret) : [flag] "m"(obj->flag));
+    /* The memory clobber is what stops the load being hoisted out of a loop,
+       a byte wide load has no way to tell the compiler it is not reusable. */
+    __asm__ volatile("mov %[flag], %[value]\n\t"
+                     : [value] "=r"(ret)
+                     : [flag] "m"(obj->flag)
+                     : "memory");
     POST_ATOMIC_LOAD_FENCE(memory_order);
     return ret;
 }
