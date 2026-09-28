@@ -193,7 +193,7 @@ void sn_memory_fence(SnMemoryOrder fence) {
 }
 
 bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
-    SN_UNUSED(memory_order);
+    PRE_ATOMIC_RMW_FENCE(memory_order);
     bool ret = false;
     unsigned int status;
     __asm__ volatile(
@@ -205,14 +205,18 @@ bool sn_atomic_flag_test_and_set_explicit(volatile sn_atomic_flag *obj, SnMemory
         : [ret] "=&r"(ret), [status] "=&r"(status), [flag] "+Q"(obj->flag)
         : [one] "r"((bool)true)
         : "memory");
+    POST_ATOMIC_RMW_FENCE(memory_order);
     return ret;
 }
 
 void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
     PRE_ATOMIC_RMW_FENCE(memory_order);
     bool reset = false;
-    __asm__ volatile("strb %w[value], %[flag]"
-                     : [flag] "=Q"(obj->flag)
+    /* A store release, not a plain store, so clearing is a read modify write
+       like every other RMW here and cannot be reordered against a concurrent
+       test and set. */
+    __asm__ volatile("stlrb %w[value], %[flag]"
+                     : [flag] "+Q"(obj->flag)
                      : [value] "r"(reset)
                      : "memory");
     POST_ATOMIC_RMW_FENCE(memory_order);
@@ -221,7 +225,12 @@ void sn_atomic_flag_clear_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder m
 bool sn_atomic_flag_load_explicit(volatile sn_atomic_flag *obj, SnMemoryOrder memory_order) {
     PRE_ATOMIC_LOAD_FENCE(memory_order);
     bool ret;
-    __asm__ volatile("ldrb %w[value], %[flag]" : [value] "=r"(ret) : [flag] "Q"(obj->flag));
+    /* The memory clobber is what stops the load being hoisted out of a loop,
+       a byte wide load has no way to tell the compiler it is not reusable. */
+    __asm__ volatile("ldrb %w[value], %[flag]"
+                     : [value] "=r"(ret)
+                     : [flag] "Q"(obj->flag)
+                     : "memory");
     POST_ATOMIC_LOAD_FENCE(memory_order);
     return ret;
 }

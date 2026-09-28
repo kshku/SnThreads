@@ -1,3 +1,4 @@
+#include <snthreads/atomics.h>
 #include <snthreads/condvar.h>
 #include <snthreads/mutex.h>
 #include <snthreads/rwlock.h>
@@ -35,6 +36,7 @@ void test_thread_self_basic(void) {
 }
 
 #define INC_THREADS 8
+#define FLAG_RACERS 16
 #define INC_ITERS 500000
 
 static SnMutex g_mutex;
@@ -216,11 +218,114 @@ void test_thread_self_without_attach_should_assert(void) {
     SN_UNUSED(sn_thread_self());
 }
 
+/* Every generic atomic macro resolves its function through the same
+   SN_GET_GENERIC_ATOMIC_FUNCTION dispatch, so exercising one of each catches a
+   macro that reaches for a helper that does not exist. */
+void test_generic_atomics(void) {
+    sn_atomic_int32_t counter = SN_ATOMIC_VAR_INIT(0);
+    sn_atomic_uint64_t wide = SN_ATOMIC_VAR_INIT(0);
+
+    TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 0);
+
+    sn_atomic_store_explicit(&counter, 7, SN_MEMORY_ORDER_RELEASE);
+    TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 7);
+
+    TEST_ASSERT(sn_atomic_exchange_explicit(&counter, 9, SN_MEMORY_ORDER_NONE) == 7);
+    TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 9);
+
+    /* The exchange above has to leave the object at 9 for this to report a
+       swap, and a mismatch has to leave it alone. */
+    int32_t expect = 9;
+    TEST_ASSERT(sn_atomic_compare_exchange_explicit(
+        &counter, &expect, 11, SN_MEMORY_ORDER_ACQUIRE, SN_MEMORY_ORDER_NONE));
+    TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 11);
+
+    int32_t mismatch = 0;
+    TEST_ASSERT(!sn_atomic_compare_exchange_explicit(
+        &counter, &mismatch, 13, SN_MEMORY_ORDER_ACQUIRE, SN_MEMORY_ORDER_NONE));
+    TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 11);
+    /* A failed exchange reports what it found, which is what makes the loop
+       form of compare exchange work. */
+    TEST_ASSERT(mismatch == 11);
+
+    /* Default order variant, now that expect matches, so this one does swap. */
+    TEST_ASSERT(sn_atomic_compare_exchange(&counter, &mismatch, 15));
+    TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 15);
+
+    /* Every fetch reports the value from before the operation, so track it
+       rather than restating each result. */
+    int32_t held = 15;
+    TEST_ASSERT(sn_atomic_fetch_add_explicit(&counter, 4, SN_MEMORY_ORDER_NONE) == held);
+    held += 4;
+    TEST_ASSERT(sn_atomic_fetch_add_explicit(&counter, -8, SN_MEMORY_ORDER_NONE) == held);
+    held -= 8;
+    TEST_ASSERT(sn_atomic_fetch_or_explicit(&counter, 0x40, SN_MEMORY_ORDER_NONE) == held);
+    held |= 0x40;
+    TEST_ASSERT(sn_atomic_fetch_and_explicit(&counter, 0x7E, SN_MEMORY_ORDER_NONE) == held);
+    held &= 0x7E;
+    TEST_ASSERT(sn_atomic_fetch_xor_explicit(&counter, 0xFF, SN_MEMORY_ORDER_NONE) == held);
+    held ^= 0xFF;
+    TEST_ASSERT(sn_atomic_fetch_sub_explicit(&counter, 1, SN_MEMORY_ORDER_NONE) == held);
+    held -= 1;
+    TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == held);
+
+    /* A different width, so the dispatch has to pick a different overload. */
+    TEST_ASSERT(sn_atomic_fetch_add_explicit(&wide, UINT64_C(1) << 40, SN_MEMORY_ORDER_NONE) == 0);
+    TEST_ASSERT(sn_atomic_load_explicit(&wide, SN_MEMORY_ORDER_ACQUIRE) == (UINT64_C(1) << 40));
+
+    TEST_PASS("generic_atomics");
+}
+
+/* The flag API is the other half of the atomics surface and shares the header. */
+void test_atomic_flag(void) {
+    sn_atomic_flag flag = SN_ATOMIC_FLAG_INIT;
+
+    TEST_ASSERT(!sn_atomic_flag_test_and_set(&flag));
+    TEST_ASSERT(sn_atomic_flag_test_and_set(&flag));
+    TEST_ASSERT(sn_atomic_flag_load(&flag));
+    sn_atomic_flag_clear(&flag);
+    TEST_ASSERT(!sn_atomic_flag_load(&flag));
+
+    TEST_PASS("atomic_flag");
+}
+
+/* Exactly one of the racing setters has to see the flag unset, which is what
+   makes the flag usable as a once latch. */
+static sn_atomic_flag g_latch = SN_ATOMIC_FLAG_INIT;
+static volatile int g_latch_winner = -1;
+
+static void *latch_racer(void *arg) {
+    (void)arg;
+    if (!sn_atomic_flag_test_and_set(&g_latch)) g_latch_winner = 1;
+    return NULL;
+}
+
+void test_atomic_flag_has_one_winner(void) {
+    SnThread racers[FLAG_RACERS];
+
+    g_latch_winner = -1;
+    for (int i = 0; i < FLAG_RACERS; ++i)
+        TEST_ASSERT(sn_thread_create(&racers[i], latch_racer, NULL));
+    for (int i = 0; i < FLAG_RACERS; ++i) {
+        void *ret = NULL;
+        TEST_ASSERT(sn_thread_join(&racers[i], &ret));
+    }
+
+    TEST_ASSERT(g_latch_winner == 1);
+    /* A thread that comes along later has to lose. */
+    TEST_ASSERT(sn_atomic_flag_test_and_set(&g_latch));
+
+    TEST_PASS("atomic_flag_has_one_winner");
+}
+
 int main(void) {
     // test_thread_self_without_attach_should_assert();
     TEST_ASSERT(sn_thread_init());
 
     test_thread_self_basic();
+    test_generic_atomics();
+    test_atomic_flag();
+    test_atomic_flag_has_one_winner();
     test_mutex_contention();
     test_rwlock();
     test_condvar_wakeup();
