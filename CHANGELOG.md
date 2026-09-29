@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.4] - 2026-09-28
+
+### Changed
+- -Wconversion and -Wsign-conversion are on for gcc and clang. sn_condvar_timed_wait
+  left its narrowing from the nanosecond timeout to the timespec fields implicit,
+  and the atomic xor test passed 0xFF to an int8_t parameter, which narrows to
+  -1. Both are correct by contract, so the casts are now explicit
+
 ## [0.2.3] - 2026-09-28
 
 ### Changed
