@@ -220,20 +220,32 @@ void test_thread_self_without_attach_should_assert(void) {
 
 /* Every generic atomic macro resolves its function through the same
    SN_GET_GENERIC_ATOMIC_FUNCTION dispatch, so exercising one of each catches a
-   macro that reaches for a helper that does not exist. */
-void test_generic_atomics(void) {
+   macro that reaches for a helper that does not exist. Each operation gets its
+   own test so a failure names the operation rather than a line number. */
+void test_atomic_load_store(void) {
     sn_atomic_int32_t counter = SN_ATOMIC_VAR_INIT(0);
-    sn_atomic_uint64_t wide = SN_ATOMIC_VAR_INIT(0);
 
     TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 0);
 
     sn_atomic_store_explicit(&counter, 7, SN_MEMORY_ORDER_RELEASE);
     TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 7);
 
+    TEST_PASS("atomic_load_store");
+}
+
+void test_atomic_exchange(void) {
+    sn_atomic_int32_t counter = SN_ATOMIC_VAR_INIT(7);
+
     TEST_ASSERT(sn_atomic_exchange_explicit(&counter, 9, SN_MEMORY_ORDER_NONE) == 7);
     TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 9);
 
-    /* The exchange above has to leave the object at 9 for this to report a
+    TEST_PASS("atomic_exchange");
+}
+
+void test_atomic_compare_exchange(void) {
+    sn_atomic_int32_t counter = SN_ATOMIC_VAR_INIT(9);
+
+    /* The object has to already hold what expect says for this to report a
        swap, and a mismatch has to leave it alone. */
     int32_t expect = 9;
     TEST_ASSERT(sn_atomic_compare_exchange_explicit(
@@ -252,6 +264,12 @@ void test_generic_atomics(void) {
     TEST_ASSERT(sn_atomic_compare_exchange(&counter, &mismatch, 15));
     TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == 15);
 
+    TEST_PASS("atomic_compare_exchange");
+}
+
+void test_atomic_fetch(void) {
+    sn_atomic_int32_t counter = SN_ATOMIC_VAR_INIT(15);
+
     /* Every fetch reports the value from before the operation, so track it
        rather than restating each result. */
     int32_t held = 15;
@@ -269,11 +287,52 @@ void test_generic_atomics(void) {
     held -= 1;
     TEST_ASSERT(sn_atomic_load_explicit(&counter, SN_MEMORY_ORDER_ACQUIRE) == held);
 
+    TEST_PASS("atomic_fetch");
+}
+
+void test_atomic_wide_fetch(void) {
     /* A different width, so the dispatch has to pick a different overload. */
+    sn_atomic_uint64_t wide = SN_ATOMIC_VAR_INIT(0);
+
     TEST_ASSERT(sn_atomic_fetch_add_explicit(&wide, UINT64_C(1) << 40, SN_MEMORY_ORDER_NONE) == 0);
     TEST_ASSERT(sn_atomic_load_explicit(&wide, SN_MEMORY_ORDER_ACQUIRE) == (UINT64_C(1) << 40));
 
-    TEST_PASS("generic_atomics");
+    TEST_PASS("atomic_wide_fetch");
+}
+
+void test_atomic_narrow(void) {
+    /* The narrow types are the ones the architecture has no registers for, so
+       they get their own pass over every operation. */
+    sn_atomic_int8_t eight = SN_ATOMIC_VAR_INIT(0);
+
+    sn_atomic_store_explicit(&eight, -1, SN_MEMORY_ORDER_RELEASE);
+    TEST_ASSERT(sn_atomic_load_explicit(&eight, SN_MEMORY_ORDER_ACQUIRE) == -1);
+    TEST_ASSERT(sn_atomic_exchange_explicit(&eight, 12, SN_MEMORY_ORDER_NONE) == -1);
+    TEST_ASSERT(sn_atomic_load_explicit(&eight, SN_MEMORY_ORDER_ACQUIRE) == 12);
+
+    int8_t expect8 = 12;
+    TEST_ASSERT(sn_atomic_compare_exchange_explicit(&eight, &expect8, 5, SN_MEMORY_ORDER_ACQUIRE, SN_MEMORY_ORDER_NONE));
+    TEST_ASSERT(sn_atomic_load_explicit(&eight, SN_MEMORY_ORDER_ACQUIRE) == 5);
+
+    int8_t held = 5;
+    TEST_ASSERT(sn_atomic_fetch_add_explicit(&eight, 3, SN_MEMORY_ORDER_NONE) == held);
+    held = (int8_t)(held + 3);
+    TEST_ASSERT(sn_atomic_fetch_or_explicit(&eight, 0x40, SN_MEMORY_ORDER_NONE) == held);
+    held = (int8_t)(held | 0x40);
+    TEST_ASSERT(sn_atomic_fetch_and_explicit(&eight, 0x7E, SN_MEMORY_ORDER_NONE) == held);
+    held = (int8_t)(held & 0x7E);
+    TEST_ASSERT(sn_atomic_fetch_xor_explicit(&eight, 0xFF, SN_MEMORY_ORDER_NONE) == held);
+    held = (int8_t)(held ^ 0xFF);
+    TEST_ASSERT(sn_atomic_fetch_sub_explicit(&eight, 1, SN_MEMORY_ORDER_NONE) == held);
+    held = (int8_t)(held - 1);
+    TEST_ASSERT(sn_atomic_load_explicit(&eight, SN_MEMORY_ORDER_ACQUIRE) == held);
+
+    sn_atomic_int16_t sixteen = SN_ATOMIC_VAR_INIT(0);
+    TEST_ASSERT(sn_atomic_exchange_explicit(&sixteen, 1000, SN_MEMORY_ORDER_NONE) == 0);
+    TEST_ASSERT(sn_atomic_fetch_add_explicit(&sixteen, 24, SN_MEMORY_ORDER_NONE) == 1000);
+    TEST_ASSERT(sn_atomic_load_explicit(&sixteen, SN_MEMORY_ORDER_ACQUIRE) == 1024);
+
+    TEST_PASS("atomic_narrow");
 }
 
 /* The flag API is the other half of the atomics surface and shares the header. */
@@ -325,7 +384,12 @@ int main(void) {
     TEST_ASSERT(sn_thread_init());
 
     test_thread_self_basic();
-    test_generic_atomics();
+    test_atomic_load_store();
+    test_atomic_exchange();
+    test_atomic_compare_exchange();
+    test_atomic_fetch();
+    test_atomic_wide_fetch();
+    test_atomic_narrow();
     test_atomic_flag();
     test_atomic_flag_has_one_winner();
     test_mutex_contention();
