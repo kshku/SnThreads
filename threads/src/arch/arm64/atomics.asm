@@ -281,14 +281,44 @@ $name PROC
     FETCH_ADD64_FN sn_atomic_fetch_add_uint64_t
 
 ; Fetch-sub via LL/SC
-    FETCH_ADD_FN sn_atomic_fetch_sub_int8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
-    FETCH_ADD_FN sn_atomic_fetch_sub_int16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
-    FETCH_ADD_FN sn_atomic_fetch_sub_int32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
-    FETCH_ADD64_FN sn_atomic_fetch_sub_int64_t
-    FETCH_ADD_FN sn_atomic_fetch_sub_uint8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
-    FETCH_ADD_FN sn_atomic_fetch_sub_uint16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
-    FETCH_ADD_FN sn_atomic_fetch_sub_uint32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
-    FETCH_ADD64_FN sn_atomic_fetch_sub_uint64_t
+    MACRO
+    FETCH_SUB_FN $name, $ldxr, $stxr, $mov_ret
+$name PROC
+    dmb ish
+{retry}
+    $ldxr
+    sub w5, w4, w1
+    $stxr
+    cbnz w3, {retry}
+    $mov_ret
+    dmb ish
+    ret
+    ENDP
+    MEND
+
+    MACRO
+    FETCH_SUB64_FN $name
+$name PROC
+    dmb ish
+{retry}
+    ldxr x4, [x0]
+    sub x5, x4, x1
+    stxr w3, x5, [x0]
+    cbnz w3, {retry}
+    mov x0, w4
+    dmb ish
+    ret
+    ENDP
+    MEND
+
+    FETCH_SUB_FN sn_atomic_fetch_sub_int8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
+    FETCH_SUB_FN sn_atomic_fetch_sub_int16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
+    FETCH_SUB_FN sn_atomic_fetch_sub_int32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
+    FETCH_SUB64_FN sn_atomic_fetch_sub_int64_t
+    FETCH_SUB_FN sn_atomic_fetch_sub_uint8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
+    FETCH_SUB_FN sn_atomic_fetch_sub_uint16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
+    FETCH_SUB_FN sn_atomic_fetch_sub_uint32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
+    FETCH_SUB64_FN sn_atomic_fetch_sub_uint64_t
 
 ; Fetch-or via LL/SC
     MACRO
@@ -331,25 +361,83 @@ $name PROC
     FETCH_OR64_FN sn_atomic_fetch_or_uint64_t
 
 ; Fetch-xor via LL/SC
-    FETCH_OR_FN sn_atomic_fetch_xor_int8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
-    FETCH_OR_FN sn_atomic_fetch_xor_int16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
-    FETCH_OR_FN sn_atomic_fetch_xor_int32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
-    FETCH_OR64_FN sn_atomic_fetch_xor_int64_t
-    FETCH_OR_FN sn_atomic_fetch_xor_uint8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
-    FETCH_OR_FN sn_atomic_fetch_xor_uint16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
-    FETCH_OR_FN sn_atomic_fetch_xor_uint32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
-    FETCH_OR64_FN sn_atomic_fetch_xor_uint64_t
+    MACRO
+    FETCH_XOR_FN $name, $ldxr, $stxr, $mov_ret
+$name PROC
+    PRE_ATOMIC_RMW_FENCE W2
+{retry}
+    $ldxr
+    eor w5, w4, w1
+    $stxr
+    cbnz w3, {retry}
+    $mov_ret
+    POST_ATOMIC_RMW_FENCE W2
+    ret
+    ENDP
+    MEND
 
+    MACRO
+    FETCH_XOR64_FN $name
+$name PROC
+    PRE_ATOMIC_RMW_FENCE W2
+{retry}
+    ldxr x4, [x0]
+    eor x5, x4, x1
+    stxr w3, x5, [x0]
+    cbnz w3, {retry}
+    mov x0, w4
+    POST_ATOMIC_RMW_FENCE W2
+    ret
+    ENDP
+    MEND
+
+    FETCH_XOR_FN sn_atomic_fetch_xor_int8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
+    FETCH_XOR_FN sn_atomic_fetch_xor_int16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
+    FETCH_XOR_FN sn_atomic_fetch_xor_int32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
+    FETCH_XOR_FN sn_atomic_fetch_xor_uint8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
+    FETCH_XOR_FN sn_atomic_fetch_xor_uint16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
+    FETCH_XOR_FN sn_atomic_fetch_xor_uint32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
+    FETCH_XOR64_FN sn_atomic_fetch_xor_int64_t
+    FETCH_XOR64_FN sn_atomic_fetch_xor_uint64_t
 ; Fetch-and via LL/SC
-    FETCH_OR_FN sn_atomic_fetch_and_int8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
-    FETCH_OR_FN sn_atomic_fetch_and_int16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
-    FETCH_OR_FN sn_atomic_fetch_and_int32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
-    FETCH_OR64_FN sn_atomic_fetch_and_int64_t
-    FETCH_OR_FN sn_atomic_fetch_and_uint8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
-    FETCH_OR_FN sn_atomic_fetch_and_uint16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
-    FETCH_OR_FN sn_atomic_fetch_and_int32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
-    FETCH_OR64_FN sn_atomic_fetch_and_uint64_t
+    MACRO
+    FETCH_AND_FN $name, $ldxr, $stxr, $mov_ret
+$name PROC
+    PRE_ATOMIC_RMW_FENCE W2
+{retry}
+    $ldxr
+    and w5, w4, w1
+    $stxr
+    cbnz w3, {retry}
+    $mov_ret
+    POST_ATOMIC_RMW_FENCE W2
+    ret
+    ENDP
+    MEND
 
+    MACRO
+    FETCH_AND64_FN $name
+$name PROC
+    PRE_ATOMIC_RMW_FENCE W2
+{retry}
+    ldxr x4, [x0]
+    and x5, x4, x1
+    stxr w3, x5, [x0]
+    cbnz w3, {retry}
+    mov x0, w4
+    POST_ATOMIC_RMW_FENCE W2
+    ret
+    ENDP
+    MEND
+
+    FETCH_AND_FN sn_atomic_fetch_and_int8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
+    FETCH_AND_FN sn_atomic_fetch_and_int16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
+    FETCH_AND_FN sn_atomic_fetch_and_int32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
+    FETCH_AND_FN sn_atomic_fetch_and_uint8_t, ldxrb w4, [x0], stxrb w3, w5, [x0], mov w0, w4
+    FETCH_AND_FN sn_atomic_fetch_and_uint16_t, ldxrh w4, [x0], stxrh w3, w5, [x0], mov w0, w4
+    FETCH_AND_FN sn_atomic_fetch_and_uint32_t, ldxr w4, [x0], stxr w3, w5, [x0], mov w0, w4
+    FETCH_AND64_FN sn_atomic_fetch_and_int64_t
+    FETCH_AND64_FN sn_atomic_fetch_and_uint64_t
 ; Memory fence
 sn_memory_fence PROC
     cmp w0, #0
