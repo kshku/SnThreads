@@ -321,7 +321,8 @@ void test_atomic_narrow(void) {
     held = (int8_t)(held | 0x40);
     TEST_ASSERT(sn_atomic_fetch_and_explicit(&eight, 0x7E, SN_MEMORY_ORDER_NONE) == held);
     held = (int8_t)(held & 0x7E);
-    TEST_ASSERT(sn_atomic_fetch_xor_explicit(&eight, 0xFF, SN_MEMORY_ORDER_NONE) == held);
+    /* 0xFF is all bits, so this xor is a bitwise not */
+    TEST_ASSERT(sn_atomic_fetch_xor_explicit(&eight, (int8_t)0xFF, SN_MEMORY_ORDER_NONE) == held);
     held = (int8_t)(held ^ 0xFF);
     TEST_ASSERT(sn_atomic_fetch_sub_explicit(&eight, 1, SN_MEMORY_ORDER_NONE) == held);
     held = (int8_t)(held - 1);

@@ -34,8 +34,11 @@ void sn_condvar_wait(SnCondvar *cv, SnMutex *mutex) {
 
 bool sn_condvar_timed_wait(SnCondvar *cv, SnMutex *mutex, uint64_t timeout_ns) {
     struct timespec ts;
-    ts.tv_sec = timeout_ns / 1000000000ull;
-    ts.tv_nsec = timeout_ns % 1000000000ull;
+    /* POSIX bounds tv_nsec to 0 .. 999999999, so the remainder always fits, and
+     * tv_sec takes whole seconds. The casts match the explicit narrowing the win32
+     * implementation already does. */
+    ts.tv_sec = (time_t)(timeout_ns / 1000000000ull);
+    ts.tv_nsec = (long)(timeout_ns % 1000000000ull);
 
     return pthread_cond_timedwait(&CONDVAR(cv), &MUTEX(mutex), &ts) == 0;
 }
