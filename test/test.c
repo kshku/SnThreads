@@ -319,6 +319,8 @@ void test_atomic_flag_has_one_winner(void) {
 }
 
 int main(void) {
+    /* Unbuffered, so a crash on one platform still shows which test got there. */
+    setvbuf(stdout, NULL, _IONBF, 0);
     // test_thread_self_without_attach_should_assert();
     TEST_ASSERT(sn_thread_init());
 
