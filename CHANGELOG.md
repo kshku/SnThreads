@@ -3,6 +3,19 @@
 ## [0.2.2] - 2026-09-28
 
 ### Fixed
+- Fix the AMD64 compare exchange hardcoding a 64 bit rax, so every width
+  through it read and wrote 8 bytes. An int32_t atomic on the stack had the
+  4 bytes past it overwritten, which the compiler reported as a smashed stack
+- Fix the ARM64 atomics using a plain exclusive access at every width, so an
+  int8_t or int16_t atomic was read and written 8 bytes at a time. On a stack
+  object that is an alignment fault, and on anything else it silently corrupts
+  the neighbouring bytes. Each width now has its own load, store, exclusive
+  load, exclusive store and compare exchange, and the assembly operand width
+  is matched to the object rather than left to the compiler, which also clears
+  the 324 asm operand width warnings the ARM64 build emitted
+- Fix the ARM64 assembly subtracting by adding, and exclusive or-ing by
+  exclusive or-ing, because sn_atomic_fetch_sub, sn_atomic_fetch_xor and
+  sn_atomic_fetch_and reused the add and or macros
 - Fix sn_atomic_compare_exchange_explicit, which called a function named
   get_generic_atomic_function. Nothing declares it, so any use of the macro
   failed to compile. Every other generic macro goes through
@@ -28,7 +41,10 @@
 
 ### Added
 - Cover every generic atomic macro with a test, plus the atomic flag, its
-  single winner guarantee and the write back on a failed compare exchange
+  single winner guarantee and the write back on a failed compare exchange.
+  Narrow types get their own test, which is what exposes the width faults
+  above, so a regression names the operation that broke rather than failing
+  somewhere downstream of it
 
 ## [0.2.1] - 2026-09-24
 
