@@ -82,24 +82,38 @@
                 return value;                                                                      \
             }
 
+        /* cmpxchg always uses rax as its implicit accumulator, so the width of
+           the object has to pick the register. Using rax unconditionally would
+           read and write 8 bytes of a narrower object, which for an int32_t in
+           the caller's frame means 4 bytes of stack past the end of it. The
+           8 bit form also insists the incoming value arrives in cl. */
+        #define SN_AMD64_CMPXCHG(accumulator, constraint)                                 \
+            __asm__ volatile(                                                             \
+                "mov %[expect], %%" accumulator "\n\t"                                    \
+                "lock cmpxchg %[value], %[obj]\n\t"                                       \
+                "mov %%" accumulator ", %[expect]\n\t"                                    \
+                "sete %[swapped]"                                                         \
+                : [expect] "+m"(*expect), [obj] "+m"(obj->value), [swapped] "=q"(swapped) \
+                : [value] constraint(value)                                               \
+                : "rax", "cc", "memory");
+
         #define DEFINE_ATOMIC_COMPARE_EXCHANGE(type)                                \
             bool SN_GET_ATOMIC_FUNCTION(compare_exchange, type)(                    \
                 volatile SN_GET_ATOMIC_TYPE(type) * obj, type * expect, type value, \
                 SnMemoryOrder success, SnMemoryOrder fail) {                        \
                 SN_UNUSED(success);                                                 \
                 SN_UNUSED(fail);                                                    \
-                __asm__ goto(                                                       \
-                    "mov %[expect], %%rax\n\t"                                      \
-                    "lock cmpxchg %[value], %[obj]\n\t"                             \
-                    "mov %%rax, %[expect]\n\t"                                      \
-                    "jne %l[not_equal]"                                             \
-                    : [expect] "+m"(*expect), [obj] "+m"(obj->value)                \
-                    : [value] "ir"(value)                                           \
-                    : "rax", "cc", "memory"                                         \
-                    : not_equal);                                                   \
-                return true;                                                        \
-            not_equal:                                                              \
-                return false;                                                       \
+                bool swapped;                                                       \
+                if (sizeof(type) == 1) {                                            \
+                    SN_AMD64_CMPXCHG("al", "c");                                    \
+                } else if (sizeof(type) == 2) {                                     \
+                    SN_AMD64_CMPXCHG("ax", "r");                                    \
+                } else if (sizeof(type) == 4) {                                     \
+                    SN_AMD64_CMPXCHG("eax", "r");                                   \
+                } else {                                                            \
+                    SN_AMD64_CMPXCHG("rax", "r");                                   \
+                }                                                                   \
+                return swapped;                                                     \
             }
 
         #define DEFINE_ATOMIC_FETCH_ADD(type)                                                      \
